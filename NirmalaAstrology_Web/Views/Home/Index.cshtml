@@ -1,0 +1,314 @@
+@model NirmalaAstrology_Web.ViewModels.HomeViewModel
+@{
+    ViewBag.Title = "Nirmala Astrology - A Group of Scholars | Vedic Astrology, Kundli, Horoscope";
+    // Letter badges (no Unicode zodiac glyphs — those often render as junk on hosting)
+    var zodiacGlyph = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "Aries", "Ar" }, { "Taurus", "Ta" }, { "Gemini", "Ge" }, { "Cancer", "Cn" },
+        { "Leo", "Le" }, { "Virgo", "Vi" }, { "Libra", "Li" }, { "Scorpio", "Sc" },
+        { "Sagittarius", "Sg" }, { "Capricorn", "Cp" }, { "Aquarius", "Aq" }, { "Pisces", "Pi" }
+    };
+    var p = Model.TodayPanchang;
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-5 z-3" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>@TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-5 z-3" role="alert">
+        <i class="bi bi-exclamation-circle-fill me-2"></i>@TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<!-- Compact hero — not full-screen so cards are visible without long scroll -->
+<section class="home-hero-compact" id="hero">
+    <div class="container">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-7">
+                <span class="hero-badge mb-2 d-inline-block"><i class="bi bi-star-fill me-1"></i> Trusted since 1974</span>
+                <h1 class="home-hero-title mb-2">Nirmala <span class="text-gold">Astrology</span></h1>
+                <p class="home-hero-sub mb-3">A Group of Scholars &middot; Vedic Kundli, Numerology, Zodiac &amp; consultations</p>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="#kundli-section" class="btn btn-gold"><i class="bi bi-sun-fill me-1"></i> Generate Kundli</a>
+                    <a href="#services-grid" class="btn btn-outline-gold">All services</a>
+                    <a href="@Url.Action("Index", "Appointment")" class="btn btn-outline-light">Book appointment</a>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="home-panchang-card">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <div class="text-gold small fw-semibold">Today's Panchang</div>
+                            <div class="small text-light-muted">@(Model.TodayPanchangDateLabel ?? DateTime.Now.ToString("dddd, dd MMM yyyy"))</div>
+                        </div>
+                        <i class="bi bi-calendar3 text-gold fs-4"></i>
+                    </div>
+                    @if (p != null)
+                    {
+                        <div class="row g-2 home-panchang-grid">
+                            <div class="col-6"><span>Tithi</span><strong>@p.Tithi</strong></div>
+                            <div class="col-6"><span>Nakshatra</span><strong>@p.Nakshatra</strong></div>
+                            <div class="col-6"><span>Yoga</span><strong>@p.Yoga</strong></div>
+                            <div class="col-6"><span>Karan</span><strong>@p.Karan</strong></div>
+                            <div class="col-6"><span>Paksha</span><strong>@p.Paksha</strong></div>
+                            <div class="col-6"><span>Vaar</span><strong>@(p.VaarHindu ?? p.VaarEnglish)</strong></div>
+                            <div class="col-6"><span>Moon</span><strong>@p.Rashi</strong></div>
+                            <div class="col-6"><span>Sun</span><strong>@p.SunSign</strong></div>
+                            <div class="col-6"><span>Sunrise</span><strong>@p.Sunrise</strong></div>
+                            <div class="col-6"><span>Sunset</span><strong>@p.Sunset</strong></div>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="small text-light-muted mb-0">Panchang will appear here when calculation is available.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- All public services as cards — visible near top -->
+<section class="py-4 section-dark" id="services-grid">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-end mb-3">
+            <div>
+                <h2 class="h4 text-gold mb-1">Services</h2>
+                <p class="small text-light-muted mb-0">Tap a card &mdash; no need to scroll hunting for links.</p>
+            </div>
+        </div>
+        <div class="row g-3 home-service-grid">
+            <div class="col-6 col-md-4 col-lg-3">
+                <a class="home-service-card" href="#kundli-section">
+                    <i class="bi bi-sun-fill"></i>
+                    <strong>Generate Kundli</strong>
+                    <span>Basic chart &amp; PDF</span>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <a class="home-service-card" href="@Url.Action("Index", "PublicReport")">
+                    <i class="bi bi-file-earmark-pdf-fill"></i>
+                    <strong>Reports</strong>
+                    <span>Pricing &amp; basic PDF</span>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <a class="home-service-card" href="@Url.Action("Index", "Numerology")">
+                    <i class="bi bi-hash"></i>
+                    <strong>Numerology</strong>
+                    <span>Core numbers</span>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <a class="home-service-card" href="#zodiac-section">
+                    <i class="bi bi-stars"></i>
+                    <strong>12 Zodiac</strong>
+                    <span>Full sign details</span>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <a class="home-service-card" href="@Url.Action("Index", "Appointment")">
+                    <i class="bi bi-calendar-check-fill"></i>
+                    <strong>Book Appointment</strong>
+                    <span>Consultation</span>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <a class="home-service-card" href="@Url.Action("Index", "Contact")">
+                    <i class="bi bi-envelope-fill"></i>
+                    <strong>Contact</strong>
+                    <span>Patiala &middot; Mohali</span>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <a class="home-service-card" href="@Url.Action("Index", "Payment")">
+                    <i class="bi bi-qr-code"></i>
+                    <strong>Payment / UPI</strong>
+                    <span>Pay securely</span>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <a class="home-service-card" href="@Url.Action("Index", "Articles")">
+                    <i class="bi bi-newspaper"></i>
+                    <strong>Articles</strong>
+                    <span>Astrology insights</span>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <a class="home-service-card" href="@Url.Action("BasicHoroscope", "PublicReport")">
+                    <i class="fas fa-file-pdf"></i>
+                    <strong>Free Kundli PDF</strong>
+                    <span>2-page short report · FREE</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 12 Zodiac cards — click opens full detail -->
+<section class="py-4 section-darker" id="zodiac-section">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-end mb-3">
+            <div>
+                <h2 class="h4 text-gold mb-1">12 Zodiac Signs</h2>
+                <p class="small text-light-muted mb-0">Click any sign for full characteristics and guidance.</p>
+            </div>
+            <a class="small text-gold" href="@Url.Action("Index", "Zodiac")">View all</a>
+        </div>
+        <div class="row g-2 g-md-3">
+            @foreach (var zodiac in Model.ZodiacList ?? new List<NirmalaAstrology_Web.Models.ZodiacModel>())
+            {
+                string glyph;
+                if (!zodiacGlyph.TryGetValue(zodiac.Name ?? "", out glyph))
+                {
+                    glyph = "?";
+                }
+                <div class="col-4 col-sm-3 col-lg-2">
+                    <a href="@Url.Action("Detail", "Zodiac", new { name = zodiac.UrlName })" class="home-zodiac-card text-decoration-none">
+                        <div class="home-zodiac-glyph" aria-hidden="true"><span class="home-zodiac-badge">@glyph</span></div>
+                        <div class="home-zodiac-name">@zodiac.Name</div>
+                        <div class="home-zodiac-hindi">@zodiac.HindiName</div>
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Kundli form -->
+<section class="py-5 section-dark" id="kundli-section">
+    <div class="container">
+        <div class="section-heading mb-4">
+            <h2 class="section-title">Generate Your <span class="text-gold">Kundli</span></h2>
+            <p class="section-subtitle">Public visitors get a basic chart &amp; 2-page PDF. Full DETAILED reports are Admin only.</p>
+            <div class="heading-line"><span></span></div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="glass-card p-4 p-md-5">
+                    @using (Html.BeginForm("GenerateKundli", "Home", FormMethod.Post, new { id = "kundliForm", data_session_url = Url.RouteUrl("BirthDataSession"), data_result_url = Url.Action("KundliResult", "Home") }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger mb-3" })
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label text-light">Full Name <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text glass-input-group"><i class="fas fa-user"></i></span>
+                                    @Html.TextBoxFor(m => m.Customer.Name, new { @class = "form-control glass-input", placeholder = "Enter your full name" })
+                                </div>
+                                @Html.ValidationMessageFor(m => m.Customer.Name, "", new { @class = "text-danger small" })
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label text-light">Date of Birth <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text glass-input-group"><i class="fas fa-calendar-alt"></i></span>
+                                    @Html.TextBoxFor(m => m.Customer.DOB, "{0:yyyy-MM-dd}", new { @class = "form-control glass-input", type = "date" })
+                                </div>
+                                @Html.ValidationMessageFor(m => m.Customer.DOB, "", new { @class = "text-danger small" })
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label text-light">Time of Birth <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text glass-input-group"><i class="fas fa-clock"></i></span>
+                                    @Html.TextBoxFor(m => m.Customer.BirthTime, new { @class = "form-control glass-input", type = "time" })
+                                </div>
+                                @Html.ValidationMessageFor(m => m.Customer.BirthTime, "", new { @class = "text-danger small" })
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-light">Birth Place <span class="text-danger">*</span></label>
+                                <div class="position-relative">
+                                    <div class="input-group">
+                                        <span class="input-group-text glass-input-group"><i class="fas fa-map-marker-alt"></i></span>
+                                        <input type="text" id="placeSearch" class="form-control glass-input" placeholder="Type at least 2 characters..." autocomplete="off" value="PATIALA" />
+                                        @Html.HiddenFor(m => m.Customer.PlaceId, new { id = "placeId" })
+                                    </div>
+                                    <div id="placeDropdown" class="place-dropdown"></div>
+                                    @Html.ValidationMessageFor(m => m.Customer.PlaceId, "", new { @class = "text-danger small" })
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-light">Gender</label>
+                                <div class="d-flex gap-4 mt-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Gender" id="genderMale" value="Male" checked>
+                                        <label class="form-check-label text-light" for="genderMale">Male</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Gender" id="genderFemale" value="Female">
+                                        <label class="form-check-label text-light" for="genderFemale">Female</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Gender" id="genderOther" value="Other">
+                                        <label class="form-check-label text-light" for="genderOther">Other</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label text-light">Latitude</label>
+                                @Html.TextBoxFor(m => m.Customer.Latitude, new { @class = "form-control glass-input", id = "latitude", @readonly = "readonly", placeholder = "Auto-filled" })
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label text-light">Longitude</label>
+                                @Html.TextBoxFor(m => m.Customer.Longitude, new { @class = "form-control glass-input", id = "longitude", @readonly = "readonly", placeholder = "Auto-filled" })
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label text-light">Timezone</label>
+                                @Html.TextBoxFor(m => m.Customer.Timezone, new { @class = "form-control glass-input", id = "timezone", @readonly = "readonly", placeholder = "Auto-filled" })
+                            </div>
+                            <div class="col-12 mt-3 text-center">
+                                <button type="button" id="generateKundliBtn" class="btn btn-gold btn-lg px-4">
+                                    <i class="bi bi-sun-fill me-2"></i>Generate Kundli
+                                </button>
+                                <a class="btn btn-outline-gold btn-lg px-4" href="@Url.Action("BasicHoroscope", "PublicReport")">2-page PDF</a>
+                                <button type="button" class="btn btn-outline-light btn-lg px-4" id="clearFormBtn">Clear</button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 section-darker" id="faq-section">
+    <div class="container">
+        <div class="section-heading mb-4">
+            <h2 class="section-title">FAQ</h2>
+            <div class="heading-line"><span></span></div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-lg-9">
+                <div class="accordion" id="faqAccordion">
+                    @{ int faqIndex = 0; }
+                    @foreach (var faq in Model.FAQs ?? new List<NirmalaAstrology_Web.ViewModels.FAQItem>())
+                    {
+                        var collapseId = "faqCollapse" + faqIndex;
+                        var headerId = "faqHeader" + faqIndex;
+                        var collapsed = faqIndex > 0 ? "collapsed" : "";
+                        var showClass = faqIndex == 0 ? "show" : "";
+                        <div class="accordion-item glass-card mb-3 border-0">
+                            <h2 class="accordion-header" id="@headerId">
+                                <button class="accordion-button @collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#@collapseId" aria-expanded="@(faqIndex == 0)" aria-controls="@collapseId">
+                                    <i class="fas fa-question-circle text-gold me-2"></i>@faq.Question
+                                </button>
+                            </h2>
+                            <div id="@collapseId" class="accordion-collapse collapse @showClass" aria-labelledby="@headerId" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-light-muted">@faq.Answer</div>
+                            </div>
+                        </div>
+                        faqIndex++;
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

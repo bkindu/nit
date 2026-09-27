@@ -1,0 +1,32 @@
+@model NirmalaAstrology_Web.Models.ArticleRecord
+@{
+    ViewBag.Title = Model.Title;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<section class="py-5 section-dark" style="margin-top:80px;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <p class="mb-3"><a class="text-gold" href="@Url.Action("Index")">&larr; All articles</a></p>
+                <article class="glass-card p-4 p-md-5">
+                    <h1 class="h2 text-gold mb-2">@Model.Title</h1>
+                    @if (Model.PublishedAt.HasValue)
+                    {
+                        <p class="small text-light-muted mb-3">@Model.PublishedAt.Value.ToString("dd MMM yyyy")</p>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+                    {
+                        <img src="@Url.Content(Model.ImageUrl)" alt="" class="img-fluid rounded mb-4" />
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.Summary))
+                    {
+                        <p class="lead text-light mb-4">@Model.Summary</p>
+                    }
+                    <div class="article-body text-light">
+                        @Html.Raw(Model.BodyHtml)
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+</section>

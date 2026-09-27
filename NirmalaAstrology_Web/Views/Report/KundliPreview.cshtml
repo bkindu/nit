@@ -1,0 +1,22 @@
+@{
+    Layout = "~/Views/Shared/_AppLayout.cshtml";
+    ViewBag.Title = "Report Preview";
+    var pdfUrl = Url.Action("KundliPdf", "Report", new { mode = "inline" });
+    var downloadUrl = Url.Action("KundliPdf", "Report");
+    var printUrl = Url.Action("KundliPrint", "Report");
+}
+
+<div class="page-header no-print">
+    <h1>Official Kundli Report</h1>
+    <p>Professional letterhead document generated from calculation data — not a form screenshot.</p>
+</div>
+
+<div class="letterhead-export-bar no-print mb-3">
+    <a class="btn btn-sm btn-gold js-pdf-download" href="@downloadUrl" data-pdf-refresh="1"><i class="fas fa-file-pdf me-1"></i>Export PDF</a>
+    <a class="btn btn-sm btn-outline-gold" href="@printUrl" target="_blank" data-no-spinner="1"><i class="fas fa-print me-1"></i>Print</a>
+    <a class="btn btn-sm btn-outline-gold" href="@Url.Action("KundliResult", "Home")" data-no-spinner="1"><i class="fas fa-arrow-left me-1"></i>Back to chart screen</a>
+</div>
+
+<div class="glass-card p-2">
+    <iframe title="Official Kundli PDF preview" src="@pdfUrl" style="width:100%; min-height:82vh; border:0; background:#fff; border-radius:8px;"></iframe>
+</div>

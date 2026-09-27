@@ -1,0 +1,32 @@
+@model NirmalaAstrology_Web.ViewModels.AppointmentPaymentViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Pay for Appointment";
+    var a = Model.Appointment;
+}
+<section class="py-5" style="margin-top:80px;">
+    <div class="container" style="max-width:640px;">
+        <div class="glass-card p-4">
+            <h1 class="h3 text-gold">Payment</h1>
+            <p class="mb-1"><strong>@a.ServiceName</strong></p>
+            <p class="text-light-muted">@a.AppointmentDate.ToString("dd/MM/yyyy") · @NirmalaAstrology_Web.Services.AppointmentService.FormatTime(a.AppointmentTime)</p>
+            <p>Booking: <strong>@a.BookingRef</strong></p>
+            <div class="my-3 p-3" style="background:rgba(0,0,0,.25);border-radius:8px;">
+                <div class="d-flex justify-content-between"><span>Amount due</span><strong class="text-gold">₹@a.Amount.ToString("0.00")</strong></div>
+                <div class="small text-light-muted mt-2">Pay via UPI to <strong>@Model.UpiId</strong>, then enter your transaction reference below.</div>
+                <div class="mt-2"><a class="btn btn-sm btn-outline-gold" href="@Url.Action("Index", "Payment")">Open UPI / QR page</a></div>
+            </div>
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "text-danger mb-3" })
+                <div class="mb-3">
+                    <label class="form-label text-light">UPI / Bank transaction reference</label>
+                    <input type="text" name="transactionRef" class="form-control glass-input" value="@Model.TransactionRef" required minlength="6" />
+                </div>
+                <button type="submit" class="btn btn-gold w-100">Submit payment reference</button>
+            }
+            <p class="small text-light-muted mt-3 mb-0">Submitting a reference sets status to <em>Awaiting Verification / Pending Admin Approval</em>. Final confirmation happens only after admin approval.</p>
+        </div>
+    </div>
+</section>

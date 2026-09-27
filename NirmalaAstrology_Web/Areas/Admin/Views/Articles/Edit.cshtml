@@ -1,0 +1,55 @@
+@model NirmalaAstrology_Web.Models.ArticleEditModel
+@{
+    Layout = "~/Views/Shared/_AppLayout.cshtml";
+    ViewBag.Title = Model != null && Model.ArticleId > 0 ? "Edit Article" : "New Article";
+}
+<div class="page-header">
+    <h1>@ViewBag.Title</h1>
+    <p>Published articles appear on the public Articles page and home previews.</p>
+</div>
+
+@using (Html.BeginForm("Edit", "Articles", FormMethod.Post, new { enctype = "multipart/form-data", @class = "glass-card p-4" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.ArticleId)
+    @Html.HiddenFor(m => m.ImageUrl)
+    @Html.ValidationSummary(true, "", new { @class = "text-danger mb-3" })
+
+    <div class="mb-3">
+        <label class="form-label">Title</label>
+        @Html.TextBoxFor(m => m.Title, new { @class = "form-control glass-input", maxlength = "200" })
+        @Html.ValidationMessageFor(m => m.Title, "", new { @class = "text-danger" })
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Slug <span class="small text-light-muted">(optional — auto from title)</span></label>
+        @Html.TextBoxFor(m => m.Slug, new { @class = "form-control glass-input", maxlength = "220", placeholder = "my-article-slug" })
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Short summary</label>
+        @Html.TextAreaFor(m => m.Summary, new { @class = "form-control glass-input", rows = "2", maxlength = "500" })
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Content (HTML allowed)</label>
+        @Html.TextAreaFor(m => m.BodyHtml, new { @class = "form-control glass-input", rows = "14" })
+        @Html.ValidationMessageFor(m => m.BodyHtml, "", new { @class = "text-danger" })
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Cover image</label>
+        <input type="file" name="ImageFile" accept=".jpg,.jpeg,.png,.gif,.webp,image/*" class="form-control glass-input" />
+        <div class="form-text text-light-muted">Max 2 MB · jpg/png/gif/webp</div>
+        @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+        {
+            <div class="mt-2">
+                <img src="@Url.Content(Model.ImageUrl)" alt="" style="max-height:120px;border-radius:8px;" />
+            </div>
+        }
+    </div>
+    <div class="form-check mb-4">
+        @Html.CheckBoxFor(m => m.IsPublished, new { @class = "form-check-input" })
+        <label class="form-check-label" for="IsPublished">Published (visible on public site)</label>
+    </div>
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-gold">Save</button>
+        <a class="btn btn-outline-light" href="@Url.Action("Index")">Cancel</a>
+    </div>
+}

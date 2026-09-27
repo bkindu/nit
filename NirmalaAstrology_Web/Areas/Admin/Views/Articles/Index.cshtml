@@ -1,0 +1,65 @@
+@model System.Collections.Generic.IList<NirmalaAstrology_Web.Models.ArticleRecord>
+@{
+    Layout = "~/Views/Shared/_AppLayout.cshtml";
+    ViewBag.Title = "Articles";
+}
+<div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <div>
+        <h1>Articles</h1>
+        <p class="mb-0">Upload and publish articles for the public site.</p>
+    </div>
+    <a class="btn btn-gold" href="@Url.Action("Create")"><i class="fas fa-plus me-1"></i> New article</a>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<div class="table-responsive glass-card p-2">
+    <table class="table table-dark table-sm app-table mb-0">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Slug</th>
+                <th>Published</th>
+                <th>Updated</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @if (Model == null || Model.Count == 0)
+        {
+            <tr><td colspan="5" class="text-center text-light-muted py-4">No articles yet. Create one.</td></tr>
+        }
+        else
+        {
+            foreach (var a in Model)
+            {
+                <tr>
+                    <td>@a.Title</td>
+                    <td><code>@a.Slug</code></td>
+                    <td>@(a.IsPublished ? "Yes" : "Draft")</td>
+                    <td>@a.UpdatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td class="text-end text-nowrap">
+                        <a class="btn btn-sm btn-outline-gold" href="@Url.Action("Edit", new { id = a.ArticleId })">Edit</a>
+                        @if (a.IsPublished)
+                        {
+                            <a class="btn btn-sm btn-outline-light" target="_blank" href="@Url.Action("Detail", "Articles", new { area = "", slug = a.Slug })">View</a>
+                        }
+                        @using (Html.BeginForm("Delete", "Articles", new { id = a.ArticleId }, FormMethod.Post, new { @class = "d-inline", onsubmit = "return confirm('Delete this article?');" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        </tbody>
+    </table>
+</div>

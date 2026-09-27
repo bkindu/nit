@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  COPY this file to: App_Data/smtp.local.config (local + production).
+  Fill real mailbox values. Do NOT commit smtp.local.config.
+  Prefer port 587 (STARTTLS). If your host requires SSL-only, try 465.
+-->
+<appSettings>
+  <add key="Email:Enabled" value="true" />
+  <add key="Email:SmtpHost" value="mail.nirmalaastrology.com" />
+  <add key="Email:SmtpPort" value="465" />
+  <add key="Email:EnableSsl" value="true" />
+  <add key="Email:FromAddress" value="YOUR_MAILBOX@nirmalaastrology.com" />
+  <add key="Email:FromName" value="Nirmala Astrology" />
+  <add key="Email:SmtpUser" value="YOUR_MAILBOX@nirmalaastrology.com" />
+  <add key="Email:SmtpPassword" value="PUT_MAILBOX_PASSWORD_HERE" />
+  <add key="Email:ContactTo" value="YOUR_MAILBOX@nirmalaastrology.com" />
+  <add key="Email:AdminNotify" value="YOUR_MAILBOX@nirmalaastrology.com" />
+  <add key="Email:PublicPhone" value="98551-10123" />
+  <add key="Email:PublicAddress" value="58-A/3, Sidhu Colony, Bhadson Road, Patiala" />
+  <add key="Email:PublicWebsite" value="https://www.nirmalaastrology.com/" />
+  <add key="Email:LogoUrl" value="https://www.nirmalaastrology.com/Images/logo.png" />
+</appSettings>

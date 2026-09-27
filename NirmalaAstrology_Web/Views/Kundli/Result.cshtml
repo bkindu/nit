@@ -1,0 +1,1099 @@
+@model dynamic
+@{
+    ViewBag.Title = "Kundli Result - Nirmala Astrology";
+    // Admin workspace uses _AppLayout (admin-only nav). Public visitors keep site chrome.
+    var isAdmin = User != null && User.Identity != null && User.Identity.IsAuthenticated
+        && User.IsInRole(NirmalaAstrology_Web.Services.AuthService.RoleAdmin);
+    Layout = isAdmin ? "~/Views/Shared/_AppLayout.cshtml" : "~/Views/Shared/_Layout.cshtml";
+    ViewBag.HidePdfBar = true;
+}
+<div class="container py-5">
+    <div class="row justify-content-center" data-aos="fade-up">
+        <div class="col-lg-10">
+            <div class="glass-card p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <i class="bi bi-sun-fill fa-2x text-gold mb-2" style="font-size:2rem;"></i>
+                    <h2 class="text-gold">Your Kundli</h2>
+                    <p class="text-light-muted" id="kundliPersonInfo">Loading...</p>
+                </div>
+
+                <!-- Otp_Detaile / Prn_HoroPanchang first page -->
+                <section id="otpDetaileReport" class="otp-report mb-4" style="display:none;">
+                    <h4 class="text-gold text-center">HOROSCOPE</h4>
+                    <h5 class="text-gold text-center" id="otpReportName">NATIVE</h5>
+                    <div class="otp-line"><span>Gender</span><strong id="otpGender">Male</strong><span id="otpRelation">S/o</span></div>
+
+                    <h5 class="text-gold">BIRTH DATA</h5>
+                    <table class="table table-dark table-bordered table-sm"><tbody>
+                        <tr><th>DATE OF BIRTH</th><td id="otpDob">-</td><th>BIRTH TIME</th><td id="otpTime">-</td></tr>
+                        <tr><th>DAY (Eng)</th><td id="otpDay">-</td><th>BIRTH PLACE</th><td id="otpPlace">-</td></tr>
+                        <tr><th>LONGITUDE</th><td id="otpLongitude">-</td><th>LATITUDE</th><td id="otpLatitude">-</td></tr>
+                    </tbody></table>
+
+                    <h5 class="text-gold">CALENDARICAL TERMS (NORTH INDIAN)</h5>
+                    <table class="table table-dark table-bordered table-sm"><tbody>
+                        <tr><th>SAMVATSAR</th><td id="otpSamvatsar">-</td><th>VIKRAMI SAMVAT</th><td id="otpVikrami">-</td></tr>
+                        <tr><th>SAKA SAMVAT</th><td id="otpSaka">-</td><th>AYAN</th><td id="otpAyan">-</td></tr>
+                        <tr><th>GOLA</th><td id="otpGola">-</td><th>RITU</th><td id="otpRitu">-</td></tr>
+                        <tr><th>SAUR MAAS</th><td id="otpSaurMaas">-</td><th>PAKSHA</th><td id="otpPaksha">-</td></tr>
+                    </tbody></table>
+
+                    <h5 class="text-gold">SURYODYA KAALIK PANCHANG</h5>
+                    <table class="table table-dark table-bordered table-sm"><tbody>
+                        <tr><th>TITHI</th><td id="otpTithi">-</td><th>SUN RISE</th><td id="otpSunrise">-</td></tr>
+                        <tr><th>NAKSHATRA</th><td id="otpNakshatra">-</td><th>SUN SET</th><td id="otpSunset">-</td></tr>
+                        <tr><th>YOGA</th><td id="otpYoga">-</td><th>ISHATKAL</th><td id="otpIshtakal">-</td></tr>
+                        <tr><th>KARAN</th><td id="otpKaran">-</td><th>DINMAN</th><td id="otpDinman">-</td></tr>
+                    </tbody></table>
+                    <table class="table table-dark table-bordered table-sm" id="otpEndingTable"><tbody>
+                        <tr><th>TITHI ENDING</th><td id="otpTithiEnding">-</td><th>VAAR</th><td id="otpVaarEnding">-</td></tr>
+                        <tr><th>KARAN ENDING</th><td id="otpKaranEnding">-</td><th>YOGA ENDING</th><td id="otpYogaEnding">-</td></tr>
+                        <tr><th>NAKSHATRA ENDING</th><td id="otpNakshatraEnding">-</td><th></th><td></td></tr>
+                    </tbody></table>
+
+                    <h5 class="text-gold">TAATKALIK PANCHANG (CURRENT)</h5>
+                    <table class="table table-dark table-bordered table-sm"><tbody>
+                        <tr><th>TITHI</th><td id="otpCurrentTithi">-</td><th>Bhukat</th><td id="otpTithiBhukat">-</td><th>Bhogya</th><td id="otpTithiBhogya">-</td></tr>
+                        <tr><th>VAAR (Hindu)</th><td id="otpVaar">-</td><th>Bhukat</th><td id="otpVaarBhukat">-</td><th>Bhogya</th><td id="otpVaarBhogya">-</td></tr>
+                        <tr><th>YOGA</th><td id="otpCurrentYoga">-</td><th>Bhukat</th><td id="otpYogaBhukat">-</td><th>Bhogya</th><td id="otpYogaBhogya">-</td></tr>
+                        <tr><th>KARAN</th><td id="otpCurrentKaran">-</td><th>Bhukat</th><td id="otpKaranBhukat">-</td><th>Bhogya</th><td id="otpKaranBhogya">-</td></tr>
+                        <tr><th>NAKSHATRA</th><td id="otpCurrentNakshatra">-</td><th>CHARAN</th><td id="otpCharan">-</td><th>BHABHOG</th><td id="otpBhabhog">48000 Vikala</td></tr>
+                    </tbody></table>
+
+                    <h5 class="text-gold">HORA CHAKRAM</h5>
+                    <table class="table table-dark table-bordered table-sm" id="otpHoraTable"><tbody>
+                        <tr><th>RASHI</th><td id="horaRashi">-</td><th>RASHIPATI</th><td id="horaRashiLord">-</td></tr>
+                        <tr><th>VARAN</th><td id="horaVaran">-</td><th>VASHYA</th><td id="horaVashya">-</td></tr>
+                        <tr><th>HANSAK</th><td id="horaHansak">-</td><th>RASHI NAME</th><td id="horaRashiName">-</td></tr>
+                        <tr><th>YONI</th><td id="horaYoni">-</td><th>GANA</th><td id="horaGana">-</td></tr>
+                        <tr><th>NADI</th><td id="horaNadi">-</td><th>YUNJA</th><td id="horaYunja">-</td></tr>
+                        <tr><th>NAME LETTER</th><td id="horaNameLetter">-</td><th>VARAG</th><td id="horaVarag">-</td></tr>
+                        <tr><th>PAYA</th><td id="horaPaya">-</td><th>SUN SIGN</th><td id="horaSunSign">-</td></tr>
+                    </tbody></table>
+
+                    <h5 class="text-gold">GHAT CHAKRAM</h5>
+                    <table class="table table-dark table-bordered table-sm" id="otpGhatTable"><tbody>
+                        <tr><th>MAAS</th><td id="ghatMaas">-</td><th>TITHIES</th><td id="ghatTithies">-</td></tr>
+                        <tr><th>VAAR</th><td id="ghatVaar">-</td><th>NAKSHATAR</th><td id="ghatNakshatra">-</td></tr>
+                        <tr><th>YOG</th><td id="ghatYog">-</td><th>KARAN</th><td id="ghatKaran">-</td></tr>
+                        <tr><th>PRAHAR</th><td id="ghatPrahar">-</td><th>LAGAN</th><td id="ghatLagan">-</td></tr>
+                        <tr><th>PLANETS</th><td colspan="3" id="ghatPlanetPositions">-</td></tr>
+                        <tr><th>GRAH</th><td id="ghatGrah">-</td><th>DHANYA</th><td id="ghatDhanya">-</td></tr>
+                        <tr><th>JATI</th><td id="ghatJati">-</td><th>GENDER</th><td id="ghatGender">-</td></tr>
+                        <tr><th>KARURADI</th><td id="ghatKaruradi">-</td><th>CHARADI</th><td id="ghatCharadi">-</td></tr>
+                        <tr><th>VARNA</th><td id="ghatVarna">-</td><th></th><td></td></tr>
+                    </tbody></table>
+
+                    <h5 class="text-gold">MISCELLANEOUS DATA</h5>
+                    <table class="table table-dark table-bordered table-sm"><tbody>
+                        <tr><th>APPARENT NOON</th><td id="otpApparentNoon">-</td><th>G.M.T.</th><td id="otpGmt">-</td></tr>
+                        <tr><th>LOCAL MEAN TIME</th><td id="otpLocalMeanTime">-</td><th>DECLINATION OF SUN</th><td id="otpDeclination">-</td></tr>
+                        <tr><th>SIDEREAL TIME</th><td id="otpSidereal">-</td><th>AYANAMSA</th><td id="otpAyanamsa">-</td></tr>
+                        <tr><th>VELANTAR</th><td id="otpVelantar">-</td><th>CHARA PAL</th><td id="otpCharaPal">-</td></tr>
+                        <tr><th>PALBHA</th><td id="otpPalbha">-</td><th>MEAN SUN</th><td id="otpMeanSun">-</td></tr>
+                        <tr><th>WAR TIME CORR.</th><td id="otpWarTime">-</td><th>TRUE RAHU</th><td id="otpTrueRahu">-</td></tr>
+                    </tbody></table>
+
+                    <h5 class="text-gold">NIRAYANA GRAHA SPASTA</h5>
+                    <div class="table-responsive"><table class="table table-dark table-bordered table-sm" id="otpPlanetTable"><thead><tr>
+                        <th>Name</th>
+                        <th>Graha&nbsp;&nbsp;s&nbsp;º&nbsp;'&nbsp;"</th>
+                        <th>Gati</th>
+                        <th>Margi/Vakri</th>
+                        <th>Udya/Astha</th>
+                        <th>Nak/Pad</th>
+                        <th>Nak.-Swami Grh Devta</th>
+                        <th>Ucha-adi</th>
+                    </tr></thead><tbody></tbody></table></div>
+                </section>
+
+                <!-- SVG Chart -->
+                <div class="text-center mb-4" id="chartContainer" style="display:none;">
+                    <h5 class="text-gold mb-3" style="font-family:Consolas, 'Courier New', monospace;">JANAM LAGAN KUNDALI</h5>
+                    <div class="kundli-chart-shell p-3" style="background:#FFFEF5;border-radius:8px;border:2px solid #D2691E;width:100%;max-width:520px;margin:0 auto;">
+                        <div id="kundliChart" class="kundli-chart-host"></div>
+                    </div>
+                </div>
+
+                <!-- PNG Download -->
+                <div class="text-center mb-4" id="pngDownloadWrapper" style="display:none;">
+                    <button id="btnDownloadPNG" class="btn btn-sm" style="background:#D2691E;color:#fff;border:none;">
+                        <i class="fas fa-download me-2"></i>Download Kundli as PNG
+                    </button>
+                </div>
+
+                <!-- Download from this result — no preview page, no second calculation. -->
+                <div class="text-center mb-4 no-print" id="pdfExportWrapper" style="display:none;">
+                    @if (isAdmin)
+                    {
+                        <a id="btnExportA4Pdf" class="btn btn-sm btn-gold js-pdf-download"
+                           href="@Url.Action("KundliPdf", "Report")" data-no-spinner="1">
+                            <i class="fas fa-file-pdf me-2"></i>Export PDF
+                        </a>
+                    }
+                    else
+                    {
+                        <a id="btnExportA4Pdf" class="btn btn-sm btn-gold js-pdf-download"
+                           href="@Url.Action("DownloadBasicKundli", "PublicReport")" data-no-spinner="1">
+                            <i class="fas fa-file-pdf me-2"></i>Export PDF
+                        </a>
+                    }
+                    <div class="small text-light-muted mt-2" id="pdfExportStatus">Preparing the report from this kundli…</div>
+                </div>
+
+                <!-- Detailed Horoscope Page 2: planetary details -->
+                <section id="kundliDetailsSection" style="display:none;" class="mt-4 detailed-page-two">
+                    <div class="report-page-title">DETAILED HOROSCOPE — PLANETARY DETAILS <span>Page No. : 2</span></div>
+                    <h4 class="text-gold mb-3">Kundli Details</h4>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4"><div class="detail-card"><small>Birth Rashi</small><strong id="detailBirthRashi">-</strong></div></div>
+                        <div class="col-md-4"><div class="detail-card"><small>Sun Sign</small><strong id="detailSunSign">-</strong></div></div>
+                        <div class="col-md-4"><div class="detail-card"><small>Janma Nakshatra</small><strong id="detailNakshatra">-</strong></div></div>
+                        <div class="col-md-4"><div class="detail-card"><small>Gandmool</small><strong id="detailGandmool">-</strong></div></div>
+                        <div class="col-md-4"><div class="detail-card"><small>Paya (Rashi / Nakshatra)</small><strong id="detailPaya">-</strong></div></div>
+                        <div class="col-md-4"><div class="detail-card"><small>Manglik Yoga</small><strong id="detailManglik">-</strong></div></div>
+                    </div>
+
+                    <div id="retroInfo" style="display:none;" class="alert alert-warning">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Retrograde planets:</strong> <span id="retroText">-</span>
+                    </div>
+
+                    <h5 class="text-gold">House &amp; Planet Strength (graph)</h5>
+                    <p class="text-light-muted small" id="percentageNote"></p>
+                    <div class="row g-3 mb-3" id="percentGraphPage">
+                        <div class="col-lg-7">
+                            <h6 class="text-gold">Bhava / House %</h6>
+                            <div id="housePercentGraph"></div>
+                        </div>
+                        <div class="col-lg-5">
+                            <h6 class="text-gold">Graha %</h6>
+                            <div id="planetPercentGraph"></div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-dark table-bordered table-sm" id="housePercentageTable">
+                            <thead><tr><th>House</th><th>Rashi</th><th>Planets</th><th>Calculated %</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+
+                    <section id="ganitChainSection" style="display:none;" class="mt-4 detailed-page-two">
+                        <div class="report-page-title">GRAHA BALA, SPECIAL LAGNAS, YOGAS <span>DETAILED / MEDIUM</span></div>
+
+                        <h5 class="text-gold">Shadbala (Graha Bala)</h5>
+                        <div class="table-responsive mb-3">
+                            <table class="table table-dark table-bordered table-sm" id="grahaBalaTable">
+                                <thead><tr><th>Planet</th><th>Sthana</th><th>Dig</th><th>Kala</th><th>Cheshta</th><th>Naisarga</th><th>Drishti</th><th>Total</th><th>Rupa</th><th>Req</th><th>%</th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+
+                        <h5 class="text-gold">Bhava Bala</h5>
+                        <div class="table-responsive mb-3">
+                            <table class="table table-dark table-bordered table-sm" id="bhavaBalaTable">
+                                <thead><tr><th>House</th><th>Dig</th><th>Lord Shadbala</th><th>Total</th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <h5 class="text-gold">Special Lagnas</h5>
+                                <div class="table-responsive"><table class="table table-dark table-bordered table-sm" id="specialLagnaTable"><thead><tr><th>Lagna</th><th>Sign</th><th>RAKV</th></tr></thead><tbody></tbody></table></div>
+                            </div>
+                            <div class="col-md-6">
+                                <h5 class="text-gold">Dhoomadi Upagrahas</h5>
+                                <div class="table-responsive"><table class="table table-dark table-bordered table-sm" id="upgrahaTable"><thead><tr><th>Point</th><th>Sign</th><th>RAKV</th></tr></thead><tbody></tbody></table></div>
+                            </div>
+                        </div>
+                        <h5 class="text-gold">Special Lagna Kundlis</h5>
+                        <div class="row g-3 mb-4" id="specialLagnaCharts"></div>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <h5 class="text-gold">Gulikadi (Mantreshwar)</h5>
+                                <div class="table-responsive"><table class="table table-dark table-bordered table-sm" id="mantreshwarUpgrahaTable"><thead><tr><th>Point</th><th>Sign</th><th>RAKV</th></tr></thead><tbody></tbody></table></div>
+                            </div>
+                            <div class="col-md-6">
+                                <h5 class="text-gold">Gulikadi (Brihat Parasari)</h5>
+                                <div class="table-responsive"><table class="table table-dark table-bordered table-sm" id="parasaraUpgrahaTable"><thead><tr><th>Point</th><th>Sign</th><th>RAKV</th></tr></thead><tbody></tbody></table></div>
+                            </div>
+                        </div>
+
+                        <h5 class="text-gold">Graha Avasthas</h5>
+                        <div class="table-responsive mb-3">
+                            <table class="table table-dark table-bordered table-sm" id="avasthaTable">
+                                <thead><tr><th>Planet</th><th>Baladi</th><th>Jagradadi</th><th>Deeptadi</th><th>Charadi</th><th>Arohi</th><th>Pravas</th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+
+                        <h5 class="text-gold">Kinshukadi Sangya</h5>
+                        <div class="table-responsive mb-3">
+                            <table class="table table-dark table-bordered table-sm" id="kinshukTable">
+                                <thead><tr><th>Planet</th><th>Shodasha</th><th>Dasa</th><th>Sapta</th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+
+                        <h5 class="text-gold">Panchadha Maitri</h5>
+                        <div class="table-responsive mb-3">
+                            <table class="table table-dark table-bordered table-sm" id="panchadhaTable">
+                                <thead><tr><th>Planet</th><th>Sun</th><th>Moon</th><th>Mars</th><th>Merc</th><th>Jup</th><th>Ven</th><th>Sat</th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+
+                        <h5 class="text-gold">Detected Yogas</h5>
+                        <div class="table-responsive mb-3">
+                            <table class="table table-dark table-bordered table-sm" id="yogaTable">
+                                <thead><tr><th>Yoga</th><th>Category</th><th>Note</th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+
+                        <div id="extraDashaBlock" style="display:none;">
+                            <h5 class="text-gold">DETAILED dashas (eDashasAll)</h5>
+                            <p class="text-light-muted small mb-2">Krittikadi/Ardradi Ashtottari, Yogini, Shodshottari, Panchottari, Shatabadika, Chaturshityabadika, Davisapatika, Sashathihayani, Sandhya, Pachak.</p>
+                            <div id="extraDashaSystems"></div>
+                        </div>
+                    </section>
+
+                    <section id="ashtakavargaSection" style="display:none;" class="mt-4 detailed-page-two">
+                        <div class="report-page-title">ASHTAKAVARGA <span>DETAILED / MEDIUM</span></div>
+                        <p class="text-light-muted small mb-2">Non-Parasara school with North-Indian Trikona sodhan (VB6 <code>lAstakVarg</code> defaults).</p>
+
+                        <h5 class="text-gold">Sarvashtakavarga (Mesh → Meen)</h5>
+                        <div class="table-responsive mb-3">
+                            <table class="table table-dark table-bordered table-sm" id="sarvaAstakTable">
+                                <thead><tr><th>Type</th><th>Mes</th><th>Vrs</th><th>Mit</th><th>Krk</th><th>Sim</th><th>Kan</th><th>Tul</th><th>Vrk</th><th>Dhn</th><th>Mkr</th><th>Kum</th><th>Min</th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+
+                        <h5 class="text-gold">Individual Ashtak Vargas</h5>
+                        <div class="table-responsive mb-3">
+                            <table class="table table-dark table-bordered table-sm" id="individualAstakTable">
+                                <thead><tr><th>Planet</th><th>Total</th><th>Mes</th><th>Vrs</th><th>Mit</th><th>Krk</th><th>Sim</th><th>Kan</th><th>Tul</th><th>Vrk</th><th>Dhn</th><th>Mkr</th><th>Kum</th><th>Min</th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+
+                        <h5 class="text-gold">Pinda Sodhan</h5>
+                        <div class="table-responsive">
+                            <table class="table table-dark table-bordered table-sm" id="pindaAstakTable">
+                                <thead><tr><th>Planet</th><th>Rasi Pinda</th><th>Graha Pinda</th><th>Total</th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <section id="varga16Section" style="display:none;" class="mt-4 detailed-page-two">
+                        <div class="report-page-title">SHODASHA VARGA TABLE (16 DIVISIONS) <span>DETAILED / MEDIUM</span></div>
+                        <p class="text-light-muted small mb-2">Sign numbers (1–12) for Lagna and nine planets in each varga. Port of VB6 <code>FnShodashVargCalc</code>.</p>
+                        <div class="table-responsive mb-4">
+                            <table class="table table-dark table-bordered table-sm" id="varga16Table">
+                                <thead>
+                                    <tr>
+                                        <th>Varga</th><th>Code</th>
+                                        <th>Lag</th><th>Sun</th><th>Mon</th><th>Mar</th><th>Mer</th>
+                                        <th>Jup</th><th>Ven</th><th>Sat</th><th>Rah</th><th>Ket</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                        <h5 class="text-gold">Shodasha Varga Kundlis (D-1 … D-60)</h5>
+                        <p class="text-light-muted small mb-2">North Indian charts for all 16 divisions (VB6 <code>Varg16KundaliesCalcAndPrinting</code>).</p>
+                        <div class="row g-3 mb-3" id="vargaAllCharts"></div>
+                        <h5 class="text-gold">Varga deities (D-2 … D-30)</h5>
+                        <div class="table-responsive mb-4">
+                            <table class="table table-dark table-bordered table-sm" id="vargaDeityTable">
+                                <thead><tr><th>Varga</th><th>Planet</th><th>Deity / Lord</th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <section id="bhavaDashaSection" style="display:none;" class="mt-4 detailed-page-two">
+                        <div class="report-page-title">BHAVA SPASTA &amp; VIMSHOTTARI DASHA <span>DETAILED / MEDIUM</span></div>
+
+                        <h5 class="text-gold">Bhava Spasta (Neelkhanth)</h5>
+                        <p class="text-light-muted small mb-2">House madhya and sandhi from Lagna and Dasham (MC).</p>
+                        <div class="table-responsive mb-4">
+                            <table class="table table-dark table-bordered table-sm" id="bhavaSpastaTable">
+                                <thead><tr><th>House</th><th>Bhava Madhya (R:A:K:V)</th><th>Bhava Sandhi (R:A:K:V)</th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+
+                        <h5 class="text-gold">Chalit Chakra — planet houses</h5>
+                        <div class="table-responsive mb-3">
+                            <table class="table table-dark table-bordered table-sm" id="chalitPlanetTable">
+                                <thead><tr><th>Planet</th><th>Rashi House</th><th>Chalit House</th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                        <h5 class="text-gold">Chalit Chakra Kundli</h5>
+                        <div class="row justify-content-center mb-4">
+                            <div class="col-md-6" id="chalitChartHost"></div>
+                        </div>
+
+                        <h5 class="text-gold">Vimshottari Dasha</h5>
+                        <p class="text-light-muted small" id="dashaBalanceText">-</p>
+                        <p class="text-light-muted small mb-2">Dates given below show ending moments of Dasa in AD Era.</p>
+                        <div id="vimshottariDashaPrint" class="vb6-dasha-print mb-3"></div>
+                        <details class="mb-3">
+                            <summary class="text-gold small" style="cursor:pointer;">Show flat Maha / Antar tables</summary>
+                            <div class="table-responsive mb-3 mt-2">
+                                <table class="table table-dark table-bordered table-sm" id="mahaDashaTable">
+                                    <thead><tr><th>#</th><th>Maha Dasa</th><th>Years</th><th>From</th><th>To</th><th>Age</th></tr></thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-dark table-bordered table-sm" id="antarDashaTable">
+                                    <thead><tr><th>Maha</th><th>Antar</th><th>From</th><th>To</th></tr></thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </details>
+                    </section>
+
+                    <div id="databaseReadingSection" class="mt-4" style="display:none;">
+                        <h5 class="text-gold">Database Readings and Rules</h5>
+                        <div class="row g-3">
+                            <div class="col-md-6"><div class="reading-card"><strong>Janma Nakshatra Reading</strong><div id="dbNakshatraReading">-</div></div></div>
+                            <div class="col-md-6"><div class="reading-card"><strong>Nakshatra Charan Reading</strong><div id="dbCharanReading">-</div></div></div>
+                            <div class="col-md-6"><div class="reading-card"><strong>Birth Rashi Reading</strong><div id="dbSignReading">-</div></div></div>
+                            <div class="col-md-6"><div class="reading-card"><strong>Lagna House Reading</strong><div id="dbHouseReading">-</div></div></div>
+                            <div class="col-12"><div class="reading-card"><strong>Udaya/Astha Rules</strong><div id="dbUdayaAstha">-</div></div></div>
+                        </div>
+                        <h6 class="text-gold mt-3">Planet-House Readings</h6>
+                        <div class="table-responsive"><table class="table table-dark table-bordered table-sm" id="dbPlanetHouseTable"><thead><tr><th>Planet</th><th>House</th><th>Birth</th><th>Gochar</th><th>Lal Kitab</th></tr></thead><tbody></tbody></table></div>
+                        <h6 class="text-gold mt-3">Planet-Sign Readings</h6>
+                        <div class="table-responsive"><table class="table table-dark table-bordered table-sm" id="dbPlanetSignTable"><thead><tr><th>Planet</th><th>Sign</th><th>Source Reading</th></tr></thead><tbody></tbody></table></div>
+                    </div>
+                </section>
+
+                <div class="report-footer text-center mt-4">NIRMALA ASTROLOGY · Sidhu Colony, Behind Central Jail, Bhadson Road, Patiala-147005 · Ph: 98551-10123 · nirmala.astrology@gmail.com<br />www.nirmalaastrology.com</div>
+                <div class="text-center mt-4">
+                    <a href="@Url.Action("Index", "Home")#kundli-section" class="btn btn-gold">
+                        <i class="fas fa-arrow-left me-2"></i>Generate Another Kundli
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    #chartContainer { width: 100%; overflow-x: auto; }
+    .kundli-chart-shell { box-sizing: border-box; }
+    .kundli-chart-host { width: 100%; min-height: 400px; }
+    .kundli-chart-host .kundli-svg { display: block; width: 100%; height: auto; margin: 0 auto; }
+    .otp-report { color:#eee; font-family: Consolas, 'Courier New', monospace; font-size: 13px; }
+    .otp-report h5 { margin-top: 18px; }
+    .otp-report th { color:#ffd700; white-space:nowrap; }
+    .otp-line { display:grid; grid-template-columns: 100px 150px 100px; gap:12px; margin-bottom:12px; }
+    .otp-line span { color:#bcbcbc; }
+    .reading-card { background:rgba(255,255,255,.04); border:1px solid rgba(255,215,0,.22); border-radius:6px; padding:12px; min-height:90px; white-space:pre-line; }
+    .reading-card strong { color:#ffd700; display:block; margin-bottom:8px; }
+    .report-page-title { color:#ffd700; font-weight:700; border-bottom:1px dashed rgba(255,215,0,.65); padding-bottom:8px; margin-bottom:18px; }
+    .report-page-title span { float:right; font-weight:400; }
+    .report-footer { border-top:1px dashed rgba(255,215,0,.65); padding-top:10px; color:#bcbcbc; font-family:Consolas, 'Courier New', monospace; }
+    @@media print {
+        @@page { size: A4 portrait; margin: 0; }
+        html, body { width: 210mm; min-height: 297mm; background: #fff8df !important; }
+        body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        body::before { content: ''; position: fixed; z-index: 0; pointer-events: none; inset: 0; background: url('/Images/Indu_Visiting_LetterHead.png') center top / 210mm 297mm no-repeat; }
+        #preloader, #mainNavbar, footer, .navbar, .site-footer, #pdfExportWrapper, #pngDownloadWrapper, .btn, .toast-container, .report-footer, #chartContainer h5 { display: none !important; }
+        main { position: relative; z-index: 1; }
+        main, .container, .row, .col-lg-10 { width: 100% !important; max-width: none !important; margin: 0 !important; padding: 0 !important; display: block !important; }
+        .glass-card { margin: 0 !important; padding: 49mm 18mm 25mm !important; background: transparent !important; border: 0 !important; box-shadow: none !important; border-radius: 0 !important; }
+        .text-center.mb-4:first-child { margin-bottom: 5mm !important; }
+        .text-gold, .otp-report h5, .report-page-title, .detail-card strong, #detailPlanetTable th, #housePercentageTable th { color: #7a2d16 !important; }
+                        #otpDetaileReport, #chartContainer, #kundliDetailsSection, #bhavaDashaSection, #varga16Section, #ashtakavargaSection, #ganitChainSection { display: block !important; }
+        #otpDetaileReport { color: #222 !important; font-size: 8.5pt !important; }
+        #otpDetaileReport h4 { font-size: 14pt !important; margin: 0 0 2mm !important; }
+        #otpDetaileReport h5 { font-size: 9.5pt !important; margin-top: 3mm !important; margin-bottom: 1mm !important; }
+        #otpDetaileReport table { width: 100%; margin-bottom: 2mm; color: #222 !important; background: rgba(255,255,255,.45) !important; page-break-inside: avoid; }
+        #otpDetaileReport th, #otpDetaileReport td { padding: 1.2mm 1.5mm !important; border-color: #9b6c42 !important; color: #222 !important; }
+        #otpDetaileReport th { font-weight: 700; }
+        #chartContainer { page-break-before: always; break-before: page; padding-top: 49mm !important; }
+        #chartContainer .kundli-chart-shell { max-width: 150mm !important; margin: 0 auto !important; border: 1px solid #8c552d !important; }
+        .detailed-page-two { page-break-before: always; break-before: page; padding-top: 49mm !important; }
+        .detail-card, .reading-card { color: #222 !important; background: rgba(255,255,255,.45) !important; border-color: #9b6c42 !important; }
+        .table-dark { --bs-table-bg: rgba(255,255,255,.35) !important; --bs-table-color: #222 !important; --bs-table-border-color: #9b6c42 !important; }
+        .table-dark th, .table-dark td { color: #222 !important; }
+        .page-break-inside-avoid { page-break-inside: avoid; }
+    }
+    .vb6-report { color:#eee; font-family: Consolas, 'Courier New', monospace; font-size: 14px; line-height: 1.55; }
+    .vb6-center { text-align:center; white-space:nowrap; overflow-x:auto; }
+    .vb6-meta { display:grid; grid-template-columns: 1fr 1fr; gap: 3px 30px; }
+    .vb6-meta span { color:#bcbcbc; }
+    .vb6-rule { border-top: 1px dashed rgba(255,215,0,.65); }
+    .detail-card { height: 100%; padding: 12px; border: 1px solid rgba(255,215,0,0.25); border-radius: 8px; background: rgba(255,255,255,0.04); }
+    .detail-card small { display:block; color:#aaa; margin-bottom:4px; }
+    .detail-card strong { color:#ffd700; }
+    #detailPlanetTable th, #housePercentageTable th { color:#ffd700; background:rgba(255,215,0,0.08); }
+    .vb6-dasha-print { font-family: Consolas, 'Courier New', monospace; font-size: 12px; color: #e8e0d0; overflow-x: auto; }
+    .vb6-dasha-group { display: grid; grid-template-columns: repeat(3, minmax(220px, 1fr)); gap: 10px; margin-bottom: 18px; }
+    .vb6-dasha-col { border: 1px solid rgba(255,215,0,.35); background: rgba(0,0,0,.25); padding: 8px 10px; border-radius: 4px; }
+    .vb6-dasha-col .md-title { color: #ffd700; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .vb6-dasha-col .md-period, .vb6-dasha-col .md-age { color: #cfcfcf; font-size: 11px; }
+    .vb6-dasha-col .md-head { display: grid; grid-template-columns: 72px 1fr auto; border-bottom: 1px dashed rgba(255,215,0,.45); margin: 6px 0 4px; padding-bottom: 2px; color: #ffd700; }
+    .vb6-dasha-col .md-row { display: grid; grid-template-columns: 72px 1fr auto; gap: 4px; line-height: 1.45; }
+    .vb6-dasha-col .md-row .pipe { color: #888; }
+    @@media (max-width: 900px) {
+        .vb6-dasha-group { grid-template-columns: 1fr; }
+    }
+    .ni-chart-card { width:100%; }
+    .ni-chart-title { font-family: Consolas, 'Courier New', monospace; font-size:0.85rem; color:#7a2d16; text-align:center; margin-bottom:8px; font-weight:600; }
+    .ni-chart-svg { width:100%; min-height:320px; }
+    .ni-chart-svg svg { width:100% !important; height:auto !important; max-width:100%; min-height:300px; aspect-ratio:1/1; display:block; margin:0 auto; }
+    .kundli-chart-host svg { width:100% !important; height:auto !important; min-height:360px; aspect-ratio:1/1; display:block; }
+    .pct-bar-row { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+    .pct-bar-label { flex:0 0 52%; font-size:0.78rem; color:#e8dcc8; line-height:1.2; }
+    .pct-bar-track { flex:1; height:14px; background:#2a2a2a; border-radius:3px; overflow:hidden; border:1px solid #444; }
+    .pct-bar-fill { height:100%; background:linear-gradient(90deg,#c45c26,#e8a838); border-radius:2px; min-width:2px; }
+    .pct-bar-fill.pct-planet { background:linear-gradient(90deg,#2d6a4f,#95d5b2); }
+    .pct-bar-val { flex:0 0 42px; text-align:right; font-size:0.8rem; color:#ffd700; font-family:Consolas,monospace; }
+    @@media (max-width: 420px) {
+        .kundli-chart-shell { padding: 6px !important; }
+        .kundli-chart-host { min-height: 280px; }
+    }
+</style>
+
+@section Scripts {
+    <script src="~/Scripts/custom/kundli-chart-svg.js?v=3.1"></script>
+    <script>
+        var DASHA_ABBR = {
+            Ketu: 'Ket', Sukra: 'Suk', Surya: 'Sur', Chandra: 'Cha', Mangla: 'Man', Mangal: 'Man',
+            Rahu: 'Rah', Guru: 'Gur', Sani: 'San', Budha: 'Bud'
+        };
+        function dashaAbbr(name) {
+            if (!name) return '---';
+            var k = String(name).trim();
+            return DASHA_ABBR[k] || (k.length <= 3 ? k : k.substring(0, 3));
+        }
+        function renderVb6VimshottariDasha(dasha) {
+            var host = document.getElementById('vimshottariDashaPrint');
+            if (!host || !dasha) return;
+            var mahas = dasha.mahaDashas || [];
+            var antars = dasha.antarDashas || [];
+            var birth = dasha.birthDateLabel || '';
+            var html = '';
+            for (var g = 0; g < 3; g++) {
+                html += '<div class="vb6-dasha-group">';
+                for (var c = 0; c < 3; c++) {
+                    var m = mahas[g * 3 + c];
+                    if (!m) { html += '<div class="vb6-dasha-col"></div>'; continue; }
+                    var list = antars.filter(function (a) { return Number(a.mahaSequence) === Number(m.sequence); });
+                    var pad = Math.max(0, 9 - list.length);
+                    html += '<div class="vb6-dasha-col">';
+                    html += '<div class="md-title">Maha Dasa of ' + (m.lord || '') + ' (' + (m.years || '') + 'y)</div>';
+                    html += '<div class="md-period">' + (m.fromDate || '') + ' to ' + (m.toDate || '') + '</div>';
+                    html += '<div class="md-age">' + (m.ageLabel || '') + '</div>';
+                    html += '<div class="md-head"><span>Antar</span><span>Beginning &nbsp; Enging</span></div>';
+                    for (var i = 0; i < 9; i++) {
+                        if (i < pad) {
+                            html += '<div class="md-row"><span>-</span><span>***********</span><span class="pipe">|</span></div>';
+                        } else {
+                            var a = list[i - pad];
+                            var label = dashaAbbr(a.mahaLord) + '-' + dashaAbbr(a.antarLord);
+                            var from = a.fromDate || birth;
+                            var range = from + '-' + (a.toDate || '');
+                            html += '<div class="md-row"><span>' + label + '</span><span>' + range + '</span><span class="pipe">|</span></div>';
+                        }
+                    }
+                    html += '</div>';
+                }
+                html += '</div>';
+            }
+            host.innerHTML = html;
+        }
+        function renderExtraDashaVb6(block) {
+            var periods = block.periods || [];
+            if (!periods.length) return '<p class="text-light-muted small">No periods.</p>';
+            // Group consecutive same mahaLord into columns of up to 3
+            var byMaha = [];
+            var map = {};
+            periods.forEach(function (p) {
+                var key = p.mahaLord || '-';
+                if (!map[key]) { map[key] = []; byMaha.push(key); }
+                map[key].push(p);
+            });
+            var html = '';
+            for (var i = 0; i < byMaha.length; i += 3) {
+                html += '<div class="vb6-dasha-group">';
+                for (var c = 0; c < 3; c++) {
+                    var lord = byMaha[i + c];
+                    if (!lord) { html += '<div class="vb6-dasha-col"></div>'; continue; }
+                    var rows = map[lord];
+                    var from = rows[0].fromDate || '';
+                    var to = rows[rows.length - 1].toDate || '';
+                    html += '<div class="vb6-dasha-col">';
+                    html += '<div class="md-title">Maha Dasa of ' + lord + '</div>';
+                    html += '<div class="md-period">' + from + ' to ' + to + '</div>';
+                    html += '<div class="md-head"><span>Antar</span><span>Beginning &nbsp; Enging</span></div>';
+                    rows.slice(0, 12).forEach(function (p) {
+                        var label = dashaAbbr(p.mahaLord) + '-' + dashaAbbr(p.antarLord || p.mahaLord);
+                        html += '<div class="md-row"><span>' + label + '</span><span>' + (p.fromDate || '') + '-' + (p.toDate || '') + '</span><span class="pipe">|</span></div>';
+                    });
+                    html += '</div>';
+                }
+                html += '</div>';
+            }
+            return html;
+        }
+
+        $(document).ready(function () {
+            // Official PDF uses ReportController (link above). Do not print the on-screen form.
+
+            var birthData = @Html.Raw(String.IsNullOrWhiteSpace(Model.BirthDataJson) ? "null" : Model.BirthDataJson);
+            if (!birthData || !birthData.year) {
+                birthData = JSON.parse(localStorage.getItem('kundliBirthData') || 'null');
+            }
+
+            if (!birthData || !birthData.year) {
+                $('#kundliPersonInfo').html('<span class="text-danger">No birth data found. Please go back and enter details.</span>');
+                return;
+            }
+
+            var day = birthData.day;
+            var month = birthData.month;
+            var year = birthData.year;
+            var hours = birthData.hours;
+            var minutes = birthData.minutes;
+            var longitude = birthData.longitude;
+            var latitude = birthData.latitude;
+            var timezone = birthData.timezone == null ? 5.5 : birthData.timezone;
+            var name = birthData.name;
+            var place = birthData.place;
+
+            $('#kundliPersonInfo').html('<span class="text-info"><i class="fas fa-spinner fa-spin me-2"></i>Calculating your Kundli...</span>');
+
+            $.ajax({
+                url: '/Home/CalculateKundli',
+                type: 'POST',
+                data: {
+                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val(),
+                    day: day,
+                    month: month,
+                    year: year,
+                    hours: hours,
+                    minutes: minutes,
+                    latitude: latitude,
+                    longitude: longitude,
+                    timezone: timezone
+                },
+                dataType: 'json',
+                success: function (response) {
+                    if (!response.success || !response.result) {
+                        $('#kundliPersonInfo').html('<span class="text-danger">Calculation failed: ' + (response.message || 'Unknown error') + '</span>');
+                        console.error('Calculation error:', response);
+                        return;
+                    }
+
+                    var result = response.result;
+                    $('#pdfExportWrapper').show();
+                    if (window.prefetchPdf) window.prefetchPdf($('#btnExportA4Pdf').attr('href'));
+
+                    // Populate the single Otp_Detaile report header.
+                    var gender = birthData.gender || 'Male';
+                    var pad2 = function (n) { return String(n).padStart(2, '0'); };
+                    var dobText = pad2(day) + '.' + pad2(month) + '.' + year;
+                    var timeText = pad2(hours) + '.' + pad2(minutes) + ' ' + (hours < 12 ? 'AM' : 'PM');
+                    $('#otpReportName').text(name || 'NATIVE');
+                    $('#otpGender').text(gender);
+                    $('#otpRelation').text(gender === 'Female' ? 'D/o' : 'S/o');
+                    $('#otpDob').text(dobText);
+                    $('#otpTime').text(timeText);
+                    $('#otpDay').text(['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'][new Date(year, month - 1, day).getDay()]);
+                    $('#otpPlace').text(place || '-');
+                    $('#otpLongitude').text(Number(longitude).toFixed(2) + (Number(longitude) < 0 ? ' WEST' : ' EAST'));
+                    $('#otpLatitude').text(Number(latitude).toFixed(2) + (Number(latitude) < 0 ? ' SOUTH' : ' NORTH'));
+                    $('#otpVikrami').text(year + 57);
+                    $('#otpSaka').text(year - 79);
+                    // VB6: Format_RAK(FNDM(dAyanamsa)) / Format_RAK(FNDM(ST/15)) — never plain decimals
+                    $('#otpAyanamsa').text(result.ayanamsaRak || '-');
+                    $('#otpSidereal').text(result.siderealTimeRak || '-');
+                    $('#otpGmt').text((String(Math.abs(Number(timezone) || 0)).padStart(2, '0') + ':00'));
+                    $('#otpDetaileReport').show();
+                    $('#kundliPersonInfo').html('<strong class="text-light">' + name + '</strong><br>' +
+                        '<span class="text-light-muted">DOB: ' + day + '/' + month + '/' + year + ' | Time: ' + hours + ':' + String(minutes).padStart(2, '0') +
+                        ' | Place: ' + place + '</span>');
+
+                    
+
+                    // Generate SVG chart
+                    try {
+                        if (typeof generateKundliSVG === 'function' && result.houses) {
+                            generateKundliSVG(result.houses, {
+                                templateUrl: '@Url.Content("~/Content/Kun.svg")',
+                                planetPositions: result.planetPositions || []
+                            }).then(function (chartSVG) {
+                                $('#kundliChart').html('<div class="ni-chart-svg">' + chartSVG + '</div>');
+                                $('#chartContainer').show();
+
+                                // Setup PNG download using the bound SVG template
+                                setupPNGDownload(chartSVG);
+                                $('#pngDownloadWrapper').show();
+                            }).catch(function (e) {
+                                console.error('SVG template binding error:', e);
+                                $('#kundliPersonInfo').append('<br><small class="text-danger">Chart binding error: ' + e.message + '</small>');
+                            });
+                        } else {
+                            console.error('generateKundliSVG not found or no houses data');
+                            $('#kundliPersonInfo').append('<br><small class="text-warning">Chart generation: SVG function not available</small>');
+                        }
+                    } catch (e) {
+                        console.error('SVG generation error:', e);
+                        $('#kundliPersonInfo').append('<br><small class="text-danger">Chart generation error: ' + e.message + '</small>');
+                    }
+
+                    // Bind the first-page VB6-style Nirayana Graha Spasta rows.
+                    var reportRows = '';
+                    var reportPlanets = (result.details && result.details.planets) || [];
+                    reportPlanets.forEach(function (planet) {
+                        // Legacy VB6 RAKV is 0-based rashi (09:25:39:00), built server-side from longitude.
+                        var position = planet.positionRakv || '-';
+                        reportRows += '<tr><td>' + (planet.fullName || planet.name || '-') + '</td><td>' + (planet.code || '-') + ' ' + position + '</td><td>' + (planet.gati || '-') + '</td><td>' + (planet.motion || '-') + '</td><td>' + (planet.udayAsta || '-') + '</td><td>' + (planet.nakshatraNumber || '-') + '/' + (planet.nakshatraPada || '-') + '</td><td>' + (planet.nakshatraLord || '-') + ' / ' + (planet.nakshatraDevta || '-') + '</td><td>' + (planet.dignity || '-') + '</td></tr>';
+                    });
+                    $('#otpPlanetTable tbody').html(reportRows || '<tr><td colspan="8">No planet details available.</td></tr>');
+                    if (result.details) {
+                        var panchang = result.details.panchang || {};
+                        $('#otpSamvatsar').text(panchang.samvatsar || '-');
+                        $('#otpVikrami').text(panchang.vikramiSamvat || '-');
+                        $('#otpSaka').text(panchang.sakaSamvat || '-');
+                        $('#otpAyan').text(panchang.ayan || '-');
+                        $('#otpGola').text(panchang.gola || '-');
+                        $('#otpRitu').text(panchang.ritu || '-');
+                        $('#otpSaurMaas').text(panchang.saurMaas || '-');
+                        $('#otpPaksha').text(panchang.paksha || '-');
+                        $('#otpNakshatra, #otpCurrentNakshatra').text(panchang.sunriseNakshatra || panchang.nakshatra || result.details.nakshatraName || '-');
+                        $('#otpCharan').text(panchang.nakshatraPada || result.details.nakshatraPada || '-');
+                        $('#otpTithi').text(panchang.sunriseTithi || panchang.tithi || '-');
+                        $('#otpCurrentTithi').text(panchang.tithi || '-');
+                        $('#otpYoga').text(panchang.sunriseYoga || panchang.yoga || '-');
+                        $('#otpCurrentYoga').text(panchang.yoga || '-');
+                        $('#otpKaran').text(panchang.sunriseKaran || panchang.karan || '-');
+                        $('#otpCurrentKaran').text(panchang.karan || '-');
+                        $('#otpVaar').text(panchang.vaarHindu || panchang.vaarEnglish || '-');
+                        $('#otpSunrise').text(panchang.sunrise || '-');
+                        $('#otpSunset').text(panchang.sunset || '-');
+                        $('#otpIshtakal').text(panchang.ishtakal || '-');
+                        $('#otpDinman').text(panchang.dinman || '-');
+                        $('#otpTithiEnding').text(panchang.tithiEnding || '-'); $('#otpVaarEnding').text(panchang.vaarEnding || '-');
+                        $('#otpKaranEnding').text(panchang.karanEnding || '-'); $('#otpYogaEnding').text(panchang.yogaEnding || '-');
+                        $('#otpNakshatraEnding').text(panchang.nakshatraEnding || '-');
+                        $('#otpTithiBhukat').text(panchang.tithiBhukat || '-');
+                        $('#otpTithiBhogya').text(panchang.tithiBhogya || '-');
+                        // VB6 Prn_HoroPanchang repeats the Tithi GP values on the Vaar row.
+                        $('#otpVaarBhukat').text(panchang.tithiBhukat || '-');
+                        $('#otpVaarBhogya').text(panchang.tithiBhogya || '-');
+                        $('#otpYogaBhukat').text(panchang.yogaBhukat || '-');
+                        $('#otpYogaBhogya').text(panchang.yogaBhogya || '-');
+                        $('#otpKaranBhukat').text(panchang.karanBhukat || '-');
+                        $('#otpKaranBhogya').text(panchang.karanBhogya || '-');
+                        $('#otpBhabhog').text(panchang.bhabhog || '48000 Vikala');
+                        $('#otpGmt').text(panchang.gmt || '-');
+                        $('#otpApparentNoon').text(panchang.apparentNoon || '-');
+                        $('#otpLocalMeanTime').text(panchang.localMeanTime || '-');
+                        $('#otpDeclination').text(panchang.declinationOfSun || '-');
+                        $('#otpSidereal').text(panchang.siderealTime || '-');
+                        $('#otpAyanamsa').text(panchang.ayanamsa || '-');
+                        $('#otpVelantar').text(panchang.velantar || '-');
+                        $('#otpCharaPal').text(panchang.charaPal || '-');
+                        $('#otpPalbha').text(panchang.palbha || '-');
+                        $('#otpMeanSun').text(panchang.meanSun || '-');
+                        $('#otpWarTime').text(panchang.warTimeCorrection || '-');
+                        $('#otpTrueRahu').text(panchang.trueRahu || '-');
+                        $('#horaRashi').text(panchang.horaRashi || panchang.rashi || '-');
+                        $('#horaRashiLord').text(panchang.horaRashiLord || '-');
+                        $('#horaVaran').text(panchang.horaVaran || '-'); $('#horaVashya').text(panchang.horaVashya || '-');
+                        $('#horaHansak').text(panchang.horaHansak || '-'); $('#horaRashiName').text(panchang.horaRashiName || '-');
+                        $('#horaYoni').text(panchang.horaYoni || '-'); $('#horaGana').text(panchang.horaGana || '-');
+                        $('#horaNadi').text(panchang.horaNadi || '-'); $('#horaYunja').text(panchang.horaYunja || '-');
+                        $('#horaNameLetter').text(panchang.horaNameLetter || '-'); $('#horaVarag').text(panchang.horaVarag || '-');
+                        $('#horaPaya').text(panchang.horaPaya || panchang.paya || '-'); $('#horaSunSign').text(panchang.horaSunSign || panchang.sunSign || '-');
+                        $('#ghatMaas').text(panchang.ghatMaas || panchang.saurMaas || '-'); $('#ghatTithies').text(panchang.ghatTithies || '-');
+                        $('#ghatVaar').text(panchang.ghatVaar || '-'); $('#ghatNakshatra').text(panchang.ghatNakshatra || '-');
+                        $('#ghatYog').text(panchang.ghatYog || '-'); $('#ghatKaran').text(panchang.ghatKaran || '-');
+                        $('#ghatPrahar').text(panchang.ghatPrahar || '-'); $('#ghatLagan').text(panchang.ghatLagan || result.ascendantRashiName || '-');
+                        $('#ghatPlanetPositions').text(panchang.ghatPlanetPositions || '-'); $('#ghatGrah').text(panchang.ghatGrah || '-');
+                        $('#ghatDhanya').text(panchang.ghatDhanya || '-'); $('#ghatJati').text(panchang.ghatJati || '-');
+                        $('#ghatGender').text(panchang.ghatGender || '-'); $('#ghatKaruradi').text(panchang.ghatKaruradi || '-');
+                        $('#ghatCharadi').text(panchang.ghatCharadi || '-'); $('#ghatVarna').text(panchang.ghatVarna || '-');
+                    }
+
+                    // Retrograde info
+                    if (result.planetPositions && Array.isArray(result.planetPositions)) {
+                        var retroPlanets = [];
+                        result.planetPositions.forEach(function (planet) {
+                            if (planet.isRetrograde) retroPlanets.push(planet.name);
+                        });
+                        if (retroPlanets.length > 0) {
+                            $('#retroText').text(retroPlanets.join(', '));
+                            $('#retroInfo').show();
+                        }
+                    }
+
+                    // Desktop-style Kundli details and percentage summaries.
+                    if (result.details) {
+                        var details = result.details;
+                        $('#detailBirthRashi').text((details.birthRashiName || '-') + (details.birthRashi ? ' (' + details.birthRashi + ')' : ''));
+                        $('#detailSunSign').text(details.sunSignName || '-');
+                        $('#detailNakshatra').text((details.nakshatraName || '-') + (details.nakshatraPada ? ' - Pada ' + details.nakshatraPada : ''));
+                        $('#detailGandmool').text(details.isGandmool ? 'YES' : 'NO');
+                        $('#detailPaya').text((details.payaRashiWise || '-') + ' / ' + (details.payaNakshatraWise || '-'));
+                        $('#detailManglik').text(details.isManglik ? 'YES' : 'NO');
+                        $('#percentageNote').text(details.percentageNote || '');
+
+                        var planetRows = '';
+                        (details.planets || []).forEach(function (planet) {
+                            // 1-based rashi kept for name/dignity; RAKV column uses legacy 0-based positionRakv.
+                            planetRows += '<tr><td>' + (planet.fullName || planet.name || '-') + '</td><td>' + (planet.code || '-') + '</td><td>' + (planet.rashiName || '-') + ' (' + (planet.rashi || '-') + ')</td><td>' + (planet.positionRakv || '-') + '</td><td>' + (planet.gati || '-') + '</td><td>' + (planet.motion || '-') + '</td><td>' + (planet.udayAsta || '-') + '</td><td>' + (planet.nakshatraNumber || '-') + '/' + (planet.nakshatraPada || '-') + '</td><td>' + (planet.nakshatraLord || '-') + ' / ' + (planet.nakshatraDevta || '-') + '</td><td>' + (planet.dignity || '-') + '</td></tr>';
+                        });
+                        $('#detailPlanetTable tbody').html(planetRows || '<tr><td colspan="10">No planet details available.</td></tr>');
+                        var db = details.databaseContent || {};
+                        var hasDb = db.nakshatraReading || db.nakshatraCharanReading || db.signReading || db.houseReading || db.udayaAsthaRule || (db.planetHouseReadings && db.planetHouseReadings.length) || (db.planetSignReadings && db.planetSignReadings.length);
+                        if (hasDb) {
+                            $('#dbNakshatraReading').text(db.nakshatraReading || '-');
+                            $('#dbCharanReading').text(db.nakshatraCharanReading || '-');
+                            $('#dbSignReading').text(db.signReading || '-');
+                            $('#dbHouseReading').text(db.houseReading || '-');
+                            $('#dbUdayaAstha').text(db.udayaAsthaRule || '-');
+                            var dbHouseRows = '';
+                            (db.planetHouseReadings || []).forEach(function (item) {
+                                dbHouseRows += '<tr><td>' + (item.planetName || item.planetCode || '-') + '</td><td>' + (item.house || '-') + '</td><td>' + (item.birthReading || '-') + '</td><td>' + (item.gocharReading || '-') + '</td><td>' + (item.lalKitabReading || '-') + '</td></tr>';
+                            });
+                            $('#dbPlanetHouseTable tbody').html(dbHouseRows || '<tr><td colspan="5">No planet-house readings available.</td></tr>');
+                            var dbSignRows = '';
+                            (db.planetSignReadings || []).forEach(function (item) {
+                                dbSignRows += '<tr><td>' + (item.planetName || item.planetCode || '-') + '</td><td>' + (item.sign || '-') + '</td><td>' + (item.sourceReading || '-') + '</td></tr>';
+                            });
+                            $('#dbPlanetSignTable tbody').html(dbSignRows || '<tr><td colspan="3">No planet-sign readings available.</td></tr>');
+                            $('#databaseReadingSection').show();
+                        }
+                        $('#kundliDetailsSection').show();
+
+                        var houseRows = '';
+                        var houseLife = [
+                            '1. Self, Health, Body, Nature…',
+                            '2. Money, Family, Speech, Food…',
+                            '3. Brother-sister, Courage, Communication…',
+                            '4. Home, Property, Mother, Comfort…',
+                            '5. Children, Intelligence, Creativity…',
+                            '6. Enemy, Debt, Disease, Service…',
+                            '7. Married life, Partners…',
+                            '8. Legacy, Insurance, Longevity…',
+                            '9. Luck, Dharma, Guru-kripa…',
+                            '10. Career, Father, Status, Fame…',
+                            '11. Gains, Friends, Ambitions…',
+                            '12. Expenditure, Losses, Moksha…'
+                        ];
+                        var houseGraphHtml = '';
+                        (details.housePercentages || []).forEach(function (house) {
+                            var pct = Number(house.occupancyPercent || 0);
+                            houseRows += '<tr><td>House ' + house.house + '</td><td>' + (house.rashiName || '-') + ' (' + (house.rashi || '-') + ')' + '</td><td>' + (house.planetCount || 0) + '</td><td><div class="progress" style="height:18px;background:#333;"><div class="progress-bar bg-warning" role="progressbar" style="width:' + pct + '%;" aria-valuenow="' + pct + '" aria-valuemin="0" aria-valuemax="100">' + pct + '%</div></div></td></tr>';
+                            var label = houseLife[(house.house || 1) - 1] || ('House ' + house.house);
+                            houseGraphHtml += '<div class="pct-bar-row"><div class="pct-bar-label">' + label + '</div><div class="pct-bar-track"><div class="pct-bar-fill" style="width:' + pct + '%"></div></div><div class="pct-bar-val">' + pct + '%</div></div>';
+                        });
+                        $('#housePercentageTable tbody').html(houseRows || '<tr><td colspan="4">No percentage details available.</td></tr>');
+                        $('#housePercentGraph').html(houseGraphHtml || '<div class="text-light-muted">No house %</div>');
+                        $('#kundliDetailsSection').show();
+                    }
+
+                    if (result.bhava && result.bhava.houses) {
+                        var bhavaRows = '';
+                        result.bhava.houses.forEach(function (h) {
+                            bhavaRows += '<tr><td>' + (h.houseName || h.houseNumber) + '</td><td>' + (h.madhyaRakv || '-') + '</td><td>' + (h.sandhiRakv || '-') + '</td></tr>';
+                        });
+                        $('#bhavaSpastaTable tbody').html(bhavaRows);
+                        var chalitRows = '';
+                        (result.bhava.chalitPlanets || []).forEach(function (p) {
+                            chalitRows += '<tr><td>' + (p.planetName || '-') + '</td><td>' + (p.rashiHouse || '-') + '</td><td>' + (p.chalitHouse || '-') + '</td></tr>';
+                        });
+                        $('#chalitPlanetTable tbody').html(chalitRows);
+                        // Chalit North Indian chart: same D-1 rashis, planets in chalit houses
+                        if (typeof renderNorthIndianChart === 'function' && result.houses && result.houses.length) {
+                            var lagSign = (result.houses[0] && (result.houses[0].rashi || result.houses[0].Rashi)) || 1;
+                            var chalitPlanets = (result.bhava.chalitPlanets || []).map(function (p) {
+                                return { planetName: p.planetName, house: p.chalitHouse, houseFromLagna: p.chalitHouse };
+                            });
+                            renderNorthIndianChart(
+                                document.getElementById('chalitChartHost'),
+                                'CHALIT CHAKRA',
+                                lagSign,
+                                chalitPlanets,
+                                { templateUrl: '@Url.Content("~/Content/Kun.svg")' }
+                            );
+                        }
+                        $('#bhavaDashaSection').show();
+                    }
+                    if (result.dasha) {
+                        $('#dashaBalanceText').text('Mahadasa balance at birth : ' + (result.dasha.balanceText || '-'));
+                        renderVb6VimshottariDasha(result.dasha);
+                        var mahaRows = '';
+                        (result.dasha.mahaDashas || []).forEach(function (m) {
+                            mahaRows += '<tr><td>' + (m.sequence || '-') + '</td><td>' + (m.lord || '-') + '</td><td>' + (m.years || '-') + '</td><td>' + (m.fromDate || '-') + '</td><td>' + (m.toDate || '-') + '</td><td>' + (m.ageLabel || '-') + '</td></tr>';
+                        });
+                        $('#mahaDashaTable tbody').html(mahaRows || '<tr><td colspan="6">No mahadasha rows.</td></tr>');
+                        var antarRows = '';
+                        (result.dasha.antarDashas || []).forEach(function (a) {
+                            antarRows += '<tr><td>' + (a.mahaLord || '-') + '</td><td>' + (a.antarLord || '-') + '</td><td>' + (a.fromDate || '-') + '</td><td>' + (a.toDate || '-') + '</td></tr>';
+                        });
+                        $('#antarDashaTable tbody').html(antarRows || '<tr><td colspan="4">No antardasha rows.</td></tr>');
+                        $('#bhavaDashaSection').show();
+                    }
+
+                    if (result.vargas && result.vargas.tableRows) {
+                        var vargaRows = '';
+                        var signNames = ['', 'Ar', 'Ta', 'Ge', 'Cn', 'Le', 'Vi', 'Li', 'Sc', 'Sg', 'Cp', 'Aq', 'Pi'];
+                        var fmt = function (n) { return n ? (signNames[n] || n) + ' (' + n + ')' : '-'; };
+                        result.vargas.tableRows.forEach(function (r) {
+                            vargaRows += '<tr><td>' + (r.name || '-') + '</td><td>' + (r.code || '-') + '</td>'
+                                + '<td>' + fmt(r.lagna) + '</td><td>' + fmt(r.sun) + '</td><td>' + fmt(r.moon) + '</td>'
+                                + '<td>' + fmt(r.mars) + '</td><td>' + fmt(r.mercury) + '</td><td>' + fmt(r.jupiter) + '</td>'
+                                + '<td>' + fmt(r.venus) + '</td><td>' + fmt(r.saturn) + '</td><td>' + fmt(r.rahu) + '</td><td>' + fmt(r.ketu) + '</td></tr>';
+                        });
+                        $('#varga16Table tbody').html(vargaRows);
+                        var chartTpl = '@Url.Content("~/Content/Kun.svg")';
+                        var vargaHosts = '';
+                        (result.vargas.charts || []).forEach(function (c, idx) {
+                            vargaHosts += '<div class="col-md-6 col-xl-4"><div id="vargaChart' + idx + '" class="ni-chart-host"></div></div>';
+                        });
+                        $('#vargaAllCharts').html(vargaHosts || '<div class="col-12 text-light-muted">No varga charts.</div>');
+                        (result.vargas.charts || []).forEach(function (c, idx) {
+                            if (typeof renderNorthIndianChart === 'function') {
+                                renderNorthIndianChart(
+                                    document.getElementById('vargaChart' + idx),
+                                    (c.code || '') + ' ' + (c.name || '') + (c.purpose ? ' — ' + c.purpose : ''),
+                                    c.lagnaSign,
+                                    c.planets || [],
+                                    { templateUrl: chartTpl }
+                                );
+                            }
+                        });
+                        var deityRows = '';
+                        (result.vargas.deities || []).forEach(function (d) {
+                            deityRows += '<tr><td>' + (d.vargaCode || '') + ' ' + (d.vargaName || '') + '</td><td>' + (d.planetName || '-') + '</td><td>' + (d.deity || '-') + '</td></tr>';
+                        });
+                        $('#vargaDeityTable tbody').html(deityRows || '<tr><td colspan="3">No deity rows.</td></tr>');
+                        $('#varga16Section').show();
+                    }
+
+                    if (result.ashtakavarga) {
+                        var av = result.ashtakavarga;
+                        var cells = function (arr) {
+                            return (arr || []).map(function (n) { return '<td>' + n + '</td>'; }).join('');
+                        };
+                        var sarvaRows = ''
+                            + '<tr><th>Sarva</th>' + cells(av.sarvaBySign) + '</tr>'
+                            + '<tr><th>Trikona</th>' + cells(av.trikonaSarvaBySign) + '</tr>'
+                            + '<tr><th>Ekadhipatya</th>' + cells(av.ekadhipatyaSarvaBySign) + '</tr>';
+                        $('#sarvaAstakTable tbody').html(sarvaRows);
+
+                        var indRows = '';
+                        (av.charts || []).forEach(function (c) {
+                            indRows += '<tr><td>' + (c.planetName || '-') + '</td><td>' + (c.totalBindus || 0) + '</td>' + cells(c.bindusBySign) + '</tr>';
+                        });
+                        $('#individualAstakTable tbody').html(indRows || '<tr><td colspan="14">No charts.</td></tr>');
+
+                        var pindaRows = '';
+                        (av.pindas || []).forEach(function (p) {
+                            pindaRows += '<tr><td>' + (p.planetName || '-') + '</td><td>' + (p.rasiPinda || 0) + '</td><td>' + (p.grahaPinda || 0) + '</td><td>' + (p.totalPinda || 0) + '</td></tr>';
+                        });
+                        $('#pindaAstakTable tbody').html(pindaRows || '<tr><td colspan="4">No pinda rows.</td></tr>');
+                        $('#ashtakavargaSection').show();
+                    }
+
+                    if (result.ganit) {
+                        var g = result.ganit;
+                        var gbRows = '';
+                        ((g.grahaBala && g.grahaBala.planets) || []).forEach(function (p) {
+                            gbRows += '<tr><td>' + p.planet + '</td><td>' + p.sthana + '</td><td>' + p.dig + '</td><td>' + p.kala + '</td><td>' + p.cheshta + '</td><td>' + p.naisarga + '</td><td>' + p.drishti + '</td><td>' + p.shadbala + '</td><td>' + p.rupas + '</td><td>' + p.requiredRupas + '</td><td>' + p.percent + '%</td></tr>';
+                        });
+                        $('#grahaBalaTable tbody').html(gbRows);
+                        // Planet % graph (VB6 last-page style labels)
+                        var planetLabels = { Sun: 'Suraj', Moon: 'Chandrma', Mars: 'Mangal', Mercury: 'Budh', Jupiter: 'Guru', Venus: 'Shukar', Saturn: 'Shani', SUR: 'Suraj', CHA: 'Chandrma', MGL: 'Mangal', BUD: 'Budh', GUR: 'Guru', SUK: 'Shukar', SAN: 'Shani' };
+                        var planetGraphHtml = '';
+                        ((g.grahaBala && g.grahaBala.planets) || []).forEach(function (p) {
+                            var pct = Math.max(0, Math.min(100, Math.round(Number(p.percent) || 0)));
+                            var nm = planetLabels[p.planet] || p.planet;
+                            planetGraphHtml += '<div class="pct-bar-row"><div class="pct-bar-label">' + nm + '</div><div class="pct-bar-track"><div class="pct-bar-fill pct-planet" style="width:' + pct + '%"></div></div><div class="pct-bar-val">' + pct + '%</div></div>';
+                        });
+                        if (planetGraphHtml) $('#planetPercentGraph').html(planetGraphHtml);
+                        var bbRows = '';
+                        ((g.grahaBala && g.grahaBala.bhavas) || []).forEach(function (b) {
+                            bbRows += '<tr><td>' + b.house + '</td><td>' + b.dig + '</td><td>' + b.lordShadbala + '</td><td>' + b.total + '</td></tr>';
+                        });
+                        $('#bhavaBalaTable tbody').html(bbRows);
+                        var fmtRakvLon = function (lon) {
+                            if (lon == null || isNaN(Number(lon))) return '-';
+                            // Client-side RAKV (0-based) for display parity when server string absent
+                            var L = ((Number(lon) % 360) + 360) % 360;
+                            var r0 = Math.floor(L / 30);
+                            var rem = L - r0 * 30;
+                            var d = Math.floor(rem);
+                            var mf = (rem - d) * 60;
+                            var m = Math.floor(mf);
+                            var s = Math.floor((mf - m) * 60 + 0.5);
+                            if (s >= 60) { s = 0; m++; }
+                            if (m >= 60) { m = 0; d++; }
+                            function p2(n) { return (n < 10 ? '0' : '') + n; }
+                            return p2(r0) + ':' + p2(d) + ':' + p2(m) + ':' + p2(s);
+                        };
+                        var sl = '';
+                        (g.specialLagnas || []).forEach(function (l) {
+                            sl += '<tr><td>' + l.name + '</td><td>' + (l.signName || '') + ' (' + l.sign + ')</td><td>' + fmtRakvLon(l.longitude) + '</td></tr>';
+                        });
+                        $('#specialLagnaTable tbody').html(sl);
+                        // Special lagna kundlis: janam planet signs, special lagna as chart lagna
+                        var janamPlanets = (result.details && result.details.planets) || [];
+                        var d1Planets = janamPlanets.filter(function (p) {
+                            return !/lagna|asc/i.test(p.name || p.fullName || '');
+                        }).map(function (p) {
+                            return { planetName: p.code || p.name, sign: p.rashi, houseFromLagna: p.house };
+                        });
+                        // Prefer D-1 varga chart planets if available
+                        var d1Chart = (result.vargas && result.vargas.charts || []).filter(function (c) { return c.code === 'D-1'; })[0];
+                        if (d1Chart && d1Chart.planets) {
+                            d1Planets = d1Chart.planets.filter(function (p) { return !/lagna/i.test(p.planetName || ''); });
+                        }
+                        var splHosts = '';
+                        (g.specialLagnas || []).forEach(function (l, idx) {
+                            splHosts += '<div class="col-md-6 col-xl-4"><div id="splLagnaChart' + idx + '" class="ni-chart-host"></div></div>';
+                        });
+                        $('#specialLagnaCharts').html(splHosts);
+                        (g.specialLagnas || []).forEach(function (l, idx) {
+                            if (typeof renderNorthIndianChart === 'function') {
+                                renderNorthIndianChart(
+                                    document.getElementById('splLagnaChart' + idx),
+                                    (l.name || 'Special Lagna').toUpperCase(),
+                                    l.sign,
+                                    d1Planets,
+                                    { templateUrl: '@Url.Content("~/Content/Kun.svg")' }
+                                );
+                            }
+                        });
+                        var fillUp = function (sel, rows) {
+                            var ug = '';
+                            (rows || []).forEach(function (l) {
+                                ug += '<tr><td>' + l.name + '</td><td>' + (l.signName || '') + ' (' + l.sign + ')</td><td>' + fmtRakvLon(l.longitude) + '</td></tr>';
+                            });
+                            $(sel + ' tbody').html(ug || '<tr><td colspan="3">-</td></tr>');
+                        };
+                        var ugSrc = g.upGrahas;
+                        if (ugSrc && !Array.isArray(ugSrc)) {
+                            fillUp('#upgrahaTable', ugSrc.dhoomadi || ugSrc.points);
+                            fillUp('#mantreshwarUpgrahaTable', ugSrc.mantreshwar);
+                            fillUp('#parasaraUpgrahaTable', ugSrc.parasara);
+                        } else {
+                            fillUp('#upgrahaTable', ugSrc);
+                            fillUp('#mantreshwarUpgrahaTable', []);
+                            fillUp('#parasaraUpgrahaTable', []);
+                        }
+                        var av = '';
+                        (g.avasthas || []).forEach(function (a) { av += '<tr><td>' + a.planet + '</td><td>' + a.baladi + '</td><td>' + a.jagradadi + '</td><td>' + a.deeptadi + '</td><td>' + a.charadiKarak + '</td><td>' + (a.arohi || '-') + '</td><td>' + (a.pravas || '-') + '</td></tr>'; });
+                        $('#avasthaTable tbody').html(av);
+                        var kn = '';
+                        (g.kinshukadi || []).forEach(function (k) { kn += '<tr><td>' + k.planet + '</td><td>' + k.shodasha + ' (' + k.shodashaCount + ')</td><td>' + k.dasaVarga + ' (' + k.dasaCount + ')</td><td>' + k.saptaVarga + ' (' + k.saptaCount + ')</td></tr>'; });
+                        $('#kinshukTable tbody').html(kn);
+                        var pd = '';
+                        (g.panchadha || []).forEach(function (r) {
+                            pd += '<tr><td>' + r.planet + '</td>' + (r.relations || []).map(function (x) { return '<td>' + x + '</td>'; }).join('') + '</tr>';
+                        });
+                        $('#panchadhaTable tbody').html(pd);
+                        var yg = '';
+                        (g.yogas || []).forEach(function (y) { yg += '<tr><td>' + y.name + '</td><td>' + y.category + '</td><td>' + y.note + '</td></tr>'; });
+                        $('#yogaTable tbody').html(yg);
+                        if (g.extraDashas) {
+                            var systems = g.extraDashas.systems || [];
+                            var html = '';
+                            systems.forEach(function (block, idx) {
+                                if (!block) return;
+                                html += '<div class="mb-4">';
+                                html += '<h6 class="text-gold mb-1">' + (block.systemName || ('System ' + (idx + 1))) + '</h6>';
+                                html += '<p class="text-light-muted small mb-2">Balance: ' + (block.balanceText || '-') + '</p>';
+                                html += renderExtraDashaVb6(block);
+                                html += '</div>';
+                            });
+                            $('#extraDashaSystems').html(html || '<p class="text-light-muted">No alternate dashas.</p>');
+                            $('#extraDashaBlock').show();
+                        }
+                        $('#ganitChainSection').show();
+                    }
+
+                    localStorage.removeItem('kundliBirthData');
+                },
+                error: function (xhr, status, error) {
+                    console.error('AJAX error:', status, error, xhr.responseText);
+                    $('#kundliPersonInfo').html('<span class="text-danger">Error calculating Kundli. Please check your birth details and try again.</span>');
+                }
+            });
+
+            // SVG to PNG download function
+            function setupPNGDownload(svgString) {
+                $('#btnDownloadPNG').on('click', function () {
+                    try {
+                        // Extract SVG content
+                        var svgEl = document.querySelector('#kundliChart svg');
+                        if (!svgEl) {
+                            alert('Chart not found');
+                            return;
+                        }
+
+                        // Clone and ensure proper namespace
+                        var clonedSvg = svgEl.cloneNode(true);
+                        clonedSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+
+                        var svgData = new XMLSerializer().serializeToString(clonedSvg);
+                        var svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+                        var svgUrl = URL.createObjectURL(svgBlob);
+
+                        // Create canvas and draw
+                        var canvas = document.createElement('canvas');
+                        canvas.width = 840;  // 2x for higher resolution
+                        canvas.height = 840;
+                        var ctx = canvas.getContext('2d');
+
+                        var img = new Image();
+                        img.onload = function () {
+                            ctx.fillStyle = '#FFFEF5';
+                            ctx.fillRect(0, 0, canvas.width, canvas.height);
+                            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                            URL.revokeObjectURL(svgUrl);
+
+                            // Download PNG
+                            var pngUrl = canvas.toDataURL('image/png');
+                            var link = document.createElement('a');
+                            link.download = 'kundli-chart.png';
+                            link.href = pngUrl;
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                        };
+                        img.onerror = function () {
+                            URL.revokeObjectURL(svgUrl);
+                            // Fallback: download SVG instead
+                            var link = document.createElement('a');
+                            link.download = 'kundli-chart.svg';
+                            link.href = svgUrl;
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                            alert('PNG conversion failed. SVG file downloaded instead.');
+                        };
+                        img.src = svgUrl;
+                    } catch (e) {
+                        console.error('PNG download error:', e);
+                        alert('Error generating PNG: ' + e.message);
+                    }
+                });
+            }
+        });
+       </script>
+}

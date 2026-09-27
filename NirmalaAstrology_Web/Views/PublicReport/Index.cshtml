@@ -1,0 +1,55 @@
+@model System.Collections.Generic.IList<NirmalaAstrology_Web.ViewModels.PublicReportCatalogItem>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Free Short Reports";
+}
+<section class="py-5" style="margin-top:80px;">
+    <div class="container">
+        <h1 class="h3 text-gold mb-2">Short Reports — FREE</h1>
+        <p class="text-light-muted mb-2">Generate and download short/basic reports at no charge. No payment gateway. No order required.</p>
+        <p class="small text-light-muted mb-4">Paid services (appointments and admin detailed reports) are separate — see <a class="text-gold" href="@Url.Action("Index", "Appointment")">Appointments</a>.</p>
+        <div class="row g-3">
+            @foreach (var r in Model)
+            {
+                var isFree = r.IsFree || r.PriceInr <= 0
+                    || string.Equals(r.ReportCode, "KUNDLI_BASIC", StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(r.ReportCode, "NUMEROLOGY_BASIC", StringComparison.OrdinalIgnoreCase);
+                <div class="col-md-6 col-lg-4">
+                    <div class="glass-card p-4 h-100">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h2 class="h5 text-gold mb-0">@r.ReportName</h2>
+                            @if (isFree)
+                            {
+                                <span class="badge bg-success">FREE</span>
+                            }
+                        </div>
+                        <p class="small text-light-muted">@(r.Description ?? "")</p>
+                        <div class="mb-3">
+                            @if (isFree)
+                            {
+                                <strong class="text-success">Price: FREE</strong>
+                            }
+                            else
+                            {
+                                <strong class="text-gold">Price: ₹@r.PriceInr.ToString("0.00")</strong>
+                            }
+                        </div>
+                        @if (string.Equals(r.ReportCode, "KUNDLI_BASIC", StringComparison.OrdinalIgnoreCase))
+                        {
+                            <a class="btn btn-gold btn-sm" href="@Url.Action("BasicHoroscope")">Generate free Kundli PDF</a>
+                        }
+                        else if (string.Equals(r.ReportCode, "NUMEROLOGY_BASIC", StringComparison.OrdinalIgnoreCase))
+                        {
+                            <a class="btn btn-gold btn-sm" href="@Url.Action("BasicNumerology")">Generate free PDF</a>
+                            <a class="btn btn-outline-gold btn-sm ms-1" href="@Url.Action("Index", "Numerology")">Online (limited)</a>
+                        }
+                        else
+                        {
+                            <span class="small text-light-muted">Available via consultation</span>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>

@@ -1,0 +1,77 @@
+@{
+    Layout = "~/Views/Shared/_AppLayout.cshtml";
+    ViewBag.Title = "Admin Dashboard";
+    var reports = ViewBag.Reports as System.Collections.Generic.IList<NirmalaAstrology_Web.Models.ReportDefinition>;
+}
+
+<div class="page-header">
+    <h1>Admin Dashboard</h1>
+    <p>Signed in as <strong>@ViewBag.UserName</strong>. Full VB6-equivalent workspace tools are available below.</p>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3"><a class="glass-card p-3 d-block text-decoration-none" href="@Url.Action("Index", "BirthData", new { area = "" })"><span class="text-gold">Birth Data</span><div class="small text-light-muted">Hub / save / report choice</div></a></div>
+    <div class="col-md-3"><a class="glass-card p-3 d-block text-decoration-none" href="@Url.Action("KundliResult", "Home", new { area = "" })"><span class="text-gold">Kundli</span><div class="small text-light-muted">Chart + DETAILED ganit</div></a></div>
+    <div class="col-md-3"><a class="glass-card p-3 d-block text-decoration-none" href="@Url.Action("KundliResult", "Home", new { area = "" })"><span class="text-gold">Official Report</span><div class="small text-light-muted">Export PDF from the kundli result</div></a></div>
+    <div class="col-md-3"><a class="glass-card p-3 d-block text-decoration-none" href="@Url.Action("Index", "MatchMaking", new { area = "" })"><span class="text-gold">Match Making</span><div class="small text-light-muted">Ashtakoot</div></a></div>
+    <div class="col-md-3"><a class="glass-card p-3 d-block text-decoration-none" href="@Url.Action("Index", "LalKitab", new { area = "" })"><span class="text-gold">Lal Kitab</span></a></div>
+    <div class="col-md-3"><a class="glass-card p-3 d-block text-decoration-none" href="@Url.Action("Index", "Numerology", new { area = "" })"><span class="text-gold">Numerology</span></a></div>
+    <div class="col-md-3"><a class="glass-card p-3 d-block text-decoration-none" href="@Url.Action("Index", "VarshPhal", new { area = "" })"><span class="text-gold">Varsh Phal</span></a></div>
+    <div class="col-md-3"><a class="glass-card p-3 d-block text-decoration-none" href="@Url.Action("Index", "Gochar", new { area = "" })"><span class="text-gold">Gochar</span></a></div>
+    <div class="col-md-3"><a class="glass-card p-3 d-block text-decoration-none" href="@Url.Action("Index", "Muhurat", new { area = "" })"><span class="text-gold">Muhurat</span></a></div>
+    <div class="col-md-3"><a class="glass-card p-3 d-block text-decoration-none" href="@Url.Action("Index", "VivahMuhurta", new { area = "" })"><span class="text-gold">Vivah Muhurta</span></a></div>
+    <div class="col-md-3"><a class="glass-card p-3 d-block text-decoration-none" href="@Url.Action("Index", "Palmistry", new { area = "" })"><span class="text-gold">Palmistry</span></a></div>
+    <div class="col-md-3"><a class="glass-card p-3 d-block text-decoration-none" href="@Url.Action("Index", "Records", new { area = "" })"><span class="text-gold">Records</span></a></div>
+    <div class="col-md-3"><a class="glass-card p-3 d-block text-decoration-none" href="@Url.Action("Index", "Appointments", new { area = "Admin" })"><span class="text-gold">Appointments</span><div class="small text-light-muted">Approve / payments</div></a></div>
+    <div class="col-md-3"><a class="glass-card p-3 d-block text-decoration-none" href="@Url.Action("Index", "Articles", new { area = "Admin" })"><span class="text-gold">Articles</span><div class="small text-light-muted">Upload / publish</div></a></div>
+</div>
+
+<section class="glass-card p-4 mb-4">
+    <h2 class="h5 text-gold mb-3">Email template test</h2>
+    <p class="small text-light-muted">Sends a branded Nirmala Astrology test message. Requires <code>App_Data/smtp.local.config</code> (mailbox password — never commit it).</p>
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+    @using (Html.BeginForm("SendTestEmail", "Dashboard", new { area = "Admin" }, FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        <div class="row g-2 align-items-end">
+            <div class="col-md-6">
+                <label class="form-label text-light">To</label>
+                <input name="to" class="form-control glass-input" type="email" value="kumarbirinder@gmail.com" required />
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-gold">Send test email</button>
+            </div>
+        </div>
+    }
+</section>
+
+<section class="glass-card p-4">
+    <h2 class="h5 text-gold mb-3">Report permissions</h2>
+    <div class="table-responsive">
+        <table class="table table-dark table-sm app-table">
+            <thead><tr><th>Code</th><th>Name</th><th>Public</th><th>Admin</th><th>Enabled</th></tr></thead>
+            <tbody>
+            @if (reports != null)
+            {
+                foreach (var r in reports)
+                {
+                    <tr>
+                        <td>@r.ReportCode</td>
+                        <td>@r.ReportName</td>
+                        <td>@(r.PublicAllowed ? "Yes" : "No")</td>
+                        <td>@(r.AdminAllowed ? "Yes" : "No")</td>
+                        <td>@(r.IsEnabled ? "Yes" : "No")</td>
+                    </tr>
+                }
+            }
+            </tbody>
+        </table>
+    </div>
+</section>

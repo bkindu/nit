@@ -1,0 +1,66 @@
+@model NirmalaAstrology_Web.ViewModels.ProfileViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "My Account";
+    var appointments = ViewBag.Appointments as System.Collections.Generic.IList<NirmalaAstrology_Web.Models.AppointmentRecord>;
+}
+<section class="py-5" style="margin-top:80px;">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-5">
+                <div class="glass-card p-4">
+                    <h1 class="h4 text-gold">My Profile</h1>
+                    <p class="small text-light-muted">Username: <strong>@Model.Username</strong></p>
+                    @using (Html.BeginForm("Index", "Account", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger mb-3" })
+                        <div class="mb-3">
+                            <label class="form-label text-light">Full name</label>
+                            @Html.TextBoxFor(m => m.DisplayName, new { @class = "form-control glass-input" })
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-light">Email</label>
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control glass-input" })
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-light">Mobile</label>
+                            @Html.TextBoxFor(m => m.Mobile, new { @class = "form-control glass-input" })
+                        </div>
+                        <button type="submit" class="btn btn-gold">Save profile</button>
+                        <a class="btn btn-outline-gold" href="@Url.Action("ChangePassword")">Change password</a>
+                    }
+                </div>
+            </div>
+            <div class="col-lg-7">
+                <div class="glass-card p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="h5 text-gold mb-0">My Appointments</h2>
+                        <a class="btn btn-sm btn-gold" href="@Url.Action("Index", "Appointment")">Book</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-dark table-sm">
+                            <thead><tr><th>Ref</th><th>Service</th><th>When</th><th>Amount</th><th>Status</th><th></th></tr></thead>
+                            <tbody>
+                            @if (appointments != null)
+                            {
+                                foreach (var a in appointments)
+                                {
+                                    <tr>
+                                        <td>@a.BookingRef</td>
+                                        <td>@a.ServiceName</td>
+                                        <td>@a.AppointmentDate.ToString("dd/MM/yyyy") @NirmalaAstrology_Web.Services.AppointmentService.FormatTime(a.AppointmentTime)</td>
+                                        <td>₹@a.Amount.ToString("0.00")</td>
+                                        <td>@a.AppointmentStatus</td>
+                                        <td><a href="@Url.Action("Details", "Appointment", new { id = a.AppointmentId })">View</a></td>
+                                    </tr>
+                                }
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

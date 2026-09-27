@@ -1,0 +1,34 @@
+@{
+    Layout = null;
+    var pdfUrl = Url.Action("KundliPdf", "Report", new { mode = "inline" });
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Print Official Report — Nirmala Astrology</title>
+    <style>
+        html, body { margin: 0; height: 100%; background: #111; }
+        iframe { border: 0; width: 100%; height: 100%; }
+    </style>
+</head>
+<body>
+    <iframe id="reportFrame" src="@pdfUrl" title="Print report"></iframe>
+    <script>
+        (function () {
+            var frame = document.getElementById('reportFrame');
+            function triggerPrint() {
+                try {
+                    frame.contentWindow.focus();
+                    frame.contentWindow.print();
+                } catch (e) {
+                    window.print();
+                }
+            }
+            frame.addEventListener('load', function () {
+                setTimeout(triggerPrint, 600);
+            });
+        })();
+    </script>
+</body>
+</html>

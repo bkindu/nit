@@ -1,0 +1,112 @@
+/* Shared A4 letterhead export for Kundli, Numerology, and workspace reports */
+@media print {
+    @page {
+        size: A4 portrait;
+        margin: 0;
+    }
+
+    html, body {
+        width: 210mm;
+        min-height: 297mm;
+        background: #fff8df !important;
+    }
+
+    body {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    body.letterhead-export::before {
+        content: '';
+        position: fixed;
+        z-index: 0;
+        pointer-events: none;
+        inset: 0;
+        background: url('/Images/Indu_Visiting_LetterHead.png') center top / 210mm 297mm no-repeat;
+    }
+
+    .no-print,
+    .app-header,
+    .app-sidebar,
+    .app-breadcrumb,
+    .app-footer,
+    .app-menu-btn,
+    #preloader,
+    #mainNavbar,
+    footer.site-footer,
+    .navbar,
+    .btn,
+    .toast-container,
+    .modal,
+    .page-header p,
+    .alert,
+    #pdfExportWrapper,
+    #pngDownloadWrapper {
+        display: none !important;
+    }
+
+    .app-body,
+    .app-main,
+    .app-content,
+    main {
+        position: relative;
+        z-index: 1;
+        display: block !important;
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: transparent !important;
+    }
+
+    .glass-card,
+    .letterhead-report,
+    .numerology-form-card,
+    .number-result-card {
+        margin: 0 !important;
+        padding: 48mm 16mm 28mm !important;
+        background: transparent !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        color: #222 !important;
+    }
+
+    .text-gold,
+    .text-light,
+    h1, h2, h3, h4, h5, h6,
+    .page-header h1 {
+        color: #7a2d16 !important;
+    }
+
+    .text-light-muted,
+    p, li, label, td, th {
+        color: #222 !important;
+    }
+
+    .table-dark {
+        --bs-table-bg: rgba(255, 255, 255, 0.42) !important;
+        --bs-table-color: #222 !important;
+        --bs-table-border-color: #9b6c42 !important;
+    }
+
+    .table-dark th,
+    .table-dark td {
+        color: #222 !important;
+        border-color: #9b6c42 !important;
+    }
+
+    .page-break-before {
+        page-break-before: always;
+        break-before: page;
+        padding-top: 48mm !important;
+    }
+}
+
+.letterhead-export-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 1rem;
+}

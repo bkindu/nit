@@ -1,0 +1,118 @@
+@model NirmalaAstrology_Web.ViewModels.AppointmentBookViewModel
+@using System.Linq
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Book Appointment";
+    var isAuth = User != null && User.Identity != null && User.Identity.IsAuthenticated;
+    var dateValue = Model.AppointmentDate.ToString("yyyy-MM-dd");
+    var minDate = DateTime.Today.ToString("yyyy-MM-dd");
+    var feeText = Model.SelectedPrice.ToString("0.00");
+}
+<section class="py-5" style="margin-top:80px;">
+    <div class="container" style="max-width:760px;">
+        <div class="glass-card p-4">
+            <h1 class="h3 text-gold">Book Appointment</h1>
+            <p class="text-light-muted">Select a service, date, and time. Charges are shown before payment.</p>
+
+            @if (!isAuth)
+            {
+                <div class="alert alert-warning">
+                    Please <a href="@Url.Action("Login", "Auth", new { returnUrl = Url.Action("Index", "Appointment") })">sign in</a>
+                    or <a href="@Url.Action("Register", "Account", new { returnUrl = Url.Action("Index", "Appointment") })">create an account</a> to complete booking.
+                </div>
+            }
+
+            <form action="@Url.Action("Index", "Appointment")" method="post" id="bookForm">
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "text-danger mb-3" })
+
+                <div class="mb-3">
+                    <label class="form-label text-light">Service</label>
+                    <select name="ServiceId" id="ServiceId" class="form-select glass-input">
+                        @foreach (var s in Model.Services)
+                        {
+                            var priceText = s.PriceInr.ToString("0.00");
+                            if (s.ServiceId == Model.ServiceId)
+                            {
+                                <option value="@s.ServiceId" data-price="@priceText" selected="selected">@s.ServiceName - Rs @priceText</option>
+                            }
+                            else
+                            {
+                                <option value="@s.ServiceId" data-price="@priceText">@s.ServiceName - Rs @priceText</option>
+                            }
+                        }
+                    </select>
+                    <div class="small text-light-muted mt-1">
+                        @if (Model.Services.Any())
+                        {
+                            var sel = Model.Services.FirstOrDefault(x => x.ServiceId == Model.ServiceId) ?? Model.Services.First();
+                            @sel.Description
+                        }
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label text-light">Appointment date</label>
+                        <input type="date" name="AppointmentDate" id="AppointmentDate" class="form-control glass-input" value="@dateValue" min="@minDate" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-light">Available time</label>
+                        <select name="AppointmentTime" id="AppointmentTime" class="form-select glass-input">
+                            <option value="">Select time</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row g-3 mt-1">
+                    <div class="col-md-4"><label class="form-label text-light">Name</label>@Html.TextBoxFor(m => m.CustomerName, new { @class = "form-control glass-input" })</div>
+                    <div class="col-md-4"><label class="form-label text-light">Email</label>@Html.TextBoxFor(m => m.CustomerEmail, new { @class = "form-control glass-input" })</div>
+                    <div class="col-md-4"><label class="form-label text-light">Mobile</label>@Html.TextBoxFor(m => m.CustomerMobile, new { @class = "form-control glass-input" })</div>
+                </div>
+                <div class="mb-3 mt-3"><label class="form-label text-light">Notes</label>@Html.TextAreaFor(m => m.Notes, 3, 20, new { @class = "form-control glass-input" })</div>
+
+                <div class="glass-card p-3 mb-3" style="background:rgba(0,0,0,.25);">
+                    <div class="d-flex justify-content-between">
+                        <span class="text-light">Consultation fee</span>
+                        <strong class="text-gold" id="feeDisplay">Rs @feeText</strong>
+                    </div>
+                    <div class="small text-light-muted mt-1">Price comes from configured service rates (not hard-coded UI).</div>
+                </div>
+
+                @if (isAuth)
+                {
+                    <button type="submit" class="btn btn-gold">Proceed to Payment</button>
+                }
+            </form>
+        </div>
+    </div>
+</section>
+@section Scripts {
+<script>
+(function () {
+  var dateEl = document.getElementById('AppointmentDate');
+  var timeEl = document.getElementById('AppointmentTime');
+  var svc = document.getElementById('ServiceId');
+  var fee = document.getElementById('feeDisplay');
+  function loadSlots() {
+    if (!dateEl || !timeEl || !dateEl.value) return;
+    fetch('@Url.Action("AvailableSlots", "Appointment")?date=' + encodeURIComponent(dateEl.value))
+      .then(function (r) { return r.json(); })
+      .then(function (slots) {
+        timeEl.innerHTML = '<option value="">Select time</option>';
+        (slots || []).forEach(function (s) {
+          var o = document.createElement('option');
+          o.value = s; o.textContent = s; timeEl.appendChild(o);
+        });
+      });
+  }
+  if (dateEl) { dateEl.addEventListener('change', loadSlots); loadSlots(); }
+  if (svc && fee) {
+    svc.addEventListener('change', function () {
+      var opt = svc.options[svc.selectedIndex];
+      fee.textContent = 'Rs ' + (opt.getAttribute('data-price') || '0.00');
+    });
+  }
+})();
+</script>
+}

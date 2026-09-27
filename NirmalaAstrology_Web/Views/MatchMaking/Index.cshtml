@@ -1,0 +1,145 @@
+@model NirmalaAstrology_Web.ViewModels.MatchMakingViewModel
+@{
+    Layout = "~/Views/Shared/_AppLayout.cshtml";
+    ViewBag.Title = "Match Making";
+}
+
+<div class="page-header">
+    <h1>Match Making</h1>
+    <p>Ashtakoot milan from VB6 <code>nMatchMaking</code>, using the Martand 36×36 <code>MatchDet</code> matrix and the same guna / parihar rules.</p>
+</div>
+
+@using (Html.BeginForm("Index", "MatchMaking", FormMethod.Post, new { id = "matchForm", autocomplete = "off" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger mb-3" })
+    <div class="row g-4">
+        @{
+            var maleData = new ViewDataDictionary(ViewData) { TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "Male" } };
+            maleData["Title"] = "Male";
+            maleData["SearchId"] = "malePlaceSearch";
+            Html.RenderPartial("_MatchPerson", Model.Male, maleData);
+            var femaleData = new ViewDataDictionary(ViewData) { TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "Female" } };
+            femaleData["Title"] = "Female";
+            femaleData["SearchId"] = "femalePlaceSearch";
+            Html.RenderPartial("_MatchPerson", Model.Female, femaleData);
+        }
+    </div>
+    <div class="mt-4">
+        <button type="submit" class="btn btn-gold">Calculate Gunas</button>
+        <a class="btn btn-outline-light" href="@Url.Action("Index", "Records")">Load from records</a>
+    </div>
+}
+
+@if (Model.Result != null)
+{
+    var r = Model.Result;
+    var m = r.Male;
+    var f = r.Female;
+    var mh = m.Hora;
+    var fh = f.Hora;
+    <section class="glass-card p-4 mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="h4 text-gold mb-0">Ashtakoot result</h2>
+            <span class="badge bg-warning text-dark fs-6">@r.Verdict</span>
+        </div>
+        <p class="text-light-muted">Normal gunas: <strong>@r.TotalNormal.ToString("0.##")</strong> / 36 &nbsp;|&nbsp; After parihar: <strong>@r.TotalModified.ToString("0.##")</strong> &nbsp;|&nbsp; Matrix row @r.MatrixRow, column @r.MatrixColumn</p>
+
+        <h3 class="h5 text-gold mt-3">Basic particulars (VB6 Match Making page 1)</h3>
+        <div class="table-responsive mb-3">
+            <table class="table table-dark table-bordered table-sm app-table">
+                <thead>
+                    <tr><th>Particular</th><th>@(m.Name ?? "Male")</th><th>@(f.Name ?? "Female")</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>DATE OF BIRTH</td><td>@m.BirthDateText</td><td>@f.BirthDateText</td></tr>
+                    <tr><td>TIME OF BIRTH</td><td>@m.BirthTimeText</td><td>@f.BirthTimeText</td></tr>
+                    <tr><td>PLACE OF BIRTH</td><td>@m.Place</td><td>@f.Place</td></tr>
+                    <tr><td>LAGNA</td><td>@m.LagnaRashiName (@m.LagnaRakv)</td><td>@f.LagnaRashiName (@f.LagnaRakv)</td></tr>
+                    <tr><td>AYANAMSA</td><td>@m.AyanamsaRak</td><td>@f.AyanamsaRak</td></tr>
+                    <tr><td>RASHI</td><td>@(mh != null ? mh.RashiName : "-")</td><td>@(fh != null ? fh.RashiName : "-")</td></tr>
+                    <tr><td>RASHIPATI</td><td>@(mh != null ? mh.RashiLord : "-")</td><td>@(fh != null ? fh.RashiLord : "-")</td></tr>
+                    <tr><td>VARNA</td><td>@(mh != null ? mh.Varna : "-")</td><td>@(fh != null ? fh.Varna : "-")</td></tr>
+                    <tr><td>VASYA</td><td>@(mh != null ? mh.Vashya : "-")</td><td>@(fh != null ? fh.Vashya : "-")</td></tr>
+                    <tr><td>HANSAK</td><td>@(mh != null ? mh.Hansak : "-")</td><td>@(fh != null ? fh.Hansak : "-")</td></tr>
+                    <tr><td>MOON (RAKV)</td><td>@m.MoonRakv</td><td>@f.MoonRakv</td></tr>
+                    <tr><td>NAKSHATARA</td><td>@(mh != null ? mh.NakshatraName : "-")</td><td>@(fh != null ? fh.NakshatraName : "-")</td></tr>
+                    <tr><td>CHARAN</td><td>@(mh != null ? mh.Pada.ToString() : "-")</td><td>@(fh != null ? fh.Pada.ToString() : "-")</td></tr>
+                    <tr><td>YONI</td><td>@(mh != null ? mh.Yoni : "-")</td><td>@(fh != null ? fh.Yoni : "-")</td></tr>
+                    <tr><td>GANA</td><td>@(mh != null ? mh.Gana : "-")</td><td>@(fh != null ? fh.Gana : "-")</td></tr>
+                    <tr><td>NADI</td><td>@(mh != null ? mh.Nadi : "-")</td><td>@(fh != null ? fh.Nadi : "-")</td></tr>
+                    <tr><td>YUNJA</td><td>@(mh != null ? mh.Yunja : "-")</td><td>@(fh != null ? fh.Yunja : "-")</td></tr>
+                    <tr><td>MANGLIK (Lagna)</td><td>@(m.IsManglik ? "Yes (Hs " + m.MarsHouse + ")" : "No")</td><td>@(f.IsManglik ? "Yes (Hs " + f.MarsHouse + ")" : "No")</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-dark table-hover app-table">
+                <thead>
+                    <tr>
+                        <th>#</th><th>Koot</th><th>Normal</th><th>Modified</th><th>Dosha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var k in r.Koots)
+                    {
+                        <tr>
+                            <td>@k.Number</td>
+                            <td>@k.Name @(string.IsNullOrEmpty(k.Note) ? "" : "(" + k.Note + ")")</td>
+                            <td>@k.Normal.ToString("0.##")</td>
+                            <td>@k.Modified.ToString("0.##")</td>
+                            <td>@(k.HasDosha ? "Yes" : "No")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <p class="mt-3 mb-1">Rashish maitri: @r.RashiMaitri &nbsp;|&nbsp; Navamsa maitri: @r.NavamsaMaitri &nbsp;|&nbsp; Bhakoot: @r.BhakootName &nbsp;|&nbsp; Tara M/F: @r.MaleTara / @r.FemaleTara</p>
+        <p>@r.ManglikNote</p>
+        @if (r.Cancellations != null && r.Cancellations.Length > 0)
+        {
+            <h3 class="h6 text-gold mt-3">Parihar applied</h3>
+            <ul>@foreach (var c in r.Cancellations) { <li>@c</li> }</ul>
+        }
+    </section>
+}
+
+@section Scripts {
+<script>
+    function bindPlaceSearch(inputId, prefix) {
+        var timer = null, lastXhr = null;
+        var $input = $('#' + inputId);
+        var $drop = $('#' + inputId + 'Dropdown');
+        $input.on('keyup', function () {
+            var q = $(this).val();
+            if (q.length < 2) { $drop.removeClass('show').empty(); return; }
+            clearTimeout(timer);
+            timer = setTimeout(function () {
+                if (lastXhr) lastXhr.abort();
+                lastXhr = $.getJSON('@Url.Action("SearchPlace", "Home")', { keyword: q }, function (data) {
+                    if (!data || !data.length) { $drop.html('<div class="place-item text-light-muted">No places found</div>').addClass('show'); return; }
+                    var html = '';
+                    data.forEach(function (p) {
+                        html += '<div class="place-item" data-id="' + p.placeId + '" data-lat="' + p.latitude + '" data-lng="' + p.longitude + '" data-tz="' + p.timezone + '" data-country="' + (p.countryName || '') + '" data-name="' + p.placeName + '"><div class="place-item-name">' + p.placeName + '</div><div class="place-item-detail">' + (p.countryName || '') + '</div></div>';
+                    });
+                    $drop.html(html).addClass('show');
+                    $drop.find('.place-item').on('click', function () {
+                        var $i = $(this);
+                        $input.val($i.data('name'));
+                        $('#' + prefix + '_PlaceId').val($i.data('id'));
+                        $('#' + prefix + '_PlaceName').val($i.data('name'));
+                        $('#' + prefix + '_CountryName').val($i.data('country'));
+                        $('#' + prefix + '_Latitude').val($i.data('lat'));
+                        $('#' + prefix + '_Longitude').val($i.data('lng'));
+                        $('#' + prefix + '_Timezone').val($i.data('tz'));
+                        $drop.removeClass('show');
+                    });
+                });
+            }, 250);
+        });
+    }
+    bindPlaceSearch('malePlaceSearch', 'Male');
+    bindPlaceSearch('femalePlaceSearch', 'Female');
+</script>
+}

@@ -1,0 +1,58 @@
+@model NirmalaAstrology_Web.ViewModels.BirthDataViewModel
+@{
+    var title = ViewData["Title"] as string ?? "Native";
+    var searchId = ViewData["SearchId"] as string ?? "placeSearch";
+}
+<div class="col-lg-6">
+    <section class="glass-card p-4 h-100">
+        <h2 class="h5 text-gold mb-3">@title</h2>
+        <div class="row g-3">
+            <div class="col-12">
+                <label class="form-label">Name</label>
+                @Html.TextBoxFor(m => m.Name, new { @class = "form-control glass-input" })
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Date of Birth</label>
+                @Html.TextBoxFor(m => m.DateOfBirth, "{0:yyyy-MM-dd}", new { @class = "form-control glass-input", type = "date" })
+            </div>
+            <div class="col-4">
+                <label class="form-label">Hour</label>
+                @Html.TextBoxFor(m => m.Hour, new { @class = "form-control glass-input", type = "number", min = "1", max = "12" })
+            </div>
+            <div class="col-4">
+                <label class="form-label">Min</label>
+                @Html.TextBoxFor(m => m.Minute, new { @class = "form-control glass-input", type = "number", min = "0", max = "59" })
+            </div>
+            <div class="col-4">
+                <label class="form-label">AM/PM</label>
+                <div class="mt-2">
+                    <label class="me-2">@Html.RadioButtonFor(m => m.Meridiem, "AM") AM</label>
+                    <label>@Html.RadioButtonFor(m => m.Meridiem, "PM") PM</label>
+                </div>
+            </div>
+            <div class="col-12">
+                <label class="form-label">Birth Place</label>
+                <div class="position-relative">
+                    <input type="text" id="@searchId" class="form-control glass-input" value="@Model.PlaceName" placeholder="Type at least 2 characters..." autocomplete="off" />
+                    @Html.HiddenFor(m => m.PlaceId)
+                    @Html.HiddenFor(m => m.PlaceName)
+                    @Html.HiddenFor(m => m.CountryName)
+                    <div id="@(searchId)Dropdown" class="place-dropdown"></div>
+                </div>
+            </div>
+            <div class="col-4">
+                <label class="form-label">Lat</label>
+                @Html.TextBoxFor(m => m.Latitude, new { @class = "form-control glass-input", @readonly = "readonly" })
+            </div>
+            <div class="col-4">
+                <label class="form-label">Long</label>
+                @Html.TextBoxFor(m => m.Longitude, new { @class = "form-control glass-input", @readonly = "readonly" })
+            </div>
+            <div class="col-4">
+                <label class="form-label">TZ</label>
+                @Html.TextBoxFor(m => m.Timezone, new { @class = "form-control glass-input", @readonly = "readonly" })
+            </div>
+            @Html.HiddenFor(m => m.Gender)
+        </div>
+    </section>
+</div>

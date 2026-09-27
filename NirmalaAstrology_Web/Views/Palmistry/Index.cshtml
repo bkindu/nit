@@ -1,0 +1,81 @@
+@model NirmalaAstrology_Web.ViewModels.PalmistryViewModel
+@using System.Collections.Generic
+@{
+    Layout = "~/Views/Shared/_AppLayout.cshtml";
+    ViewBag.Title = "Palmistry";
+    var selected = new HashSet<string>(Model.SelectedIds ?? new string[0], StringComparer.OrdinalIgnoreCase);
+    string currentGroup = null;
+}
+
+<div class="page-header">
+    <h1>Palmistry</h1>
+    <p>MVP from VB6 <code>Palmistry.frm</code>: select palm features from <code>PalmIndex</code>, optional Mount / Lucky / Remedy, English readings from Access exports.</p>
+</div>
+
+@using (Html.BeginForm("Index", "Palmistry", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger mb-3" })
+
+    <div class="glass-card p-4 mb-4">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label text-light">Native name</label>
+                @Html.TextBoxFor(m => m.NativeName, new { @class = "form-control glass-input", placeholder = "Name for heading" })
+            </div>
+            <div class="col-md-2">
+                <label class="form-label text-light">Mount</label>
+                @Html.DropDownListFor(m => m.MountCode, Model.MountOptions, new { @class = "form-select glass-input" })
+            </div>
+            <div class="col-md-2">
+                <label class="form-label text-light">Lucky</label>
+                @Html.DropDownListFor(m => m.LuckyCode, Model.LuckyOptions, new { @class = "form-select glass-input" })
+            </div>
+            <div class="col-md-2">
+                <label class="form-label text-light">Remedy</label>
+                @Html.DropDownListFor(m => m.RemedyCode, Model.RemedyOptions, new { @class = "form-select glass-input" })
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-gold w-100">Build reading</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="glass-card p-4">
+        <h2 class="h5 text-gold mb-3">Palm features</h2>
+        @foreach (var opt in Model.Options)
+        {
+            if (!string.Equals(opt.Group, currentGroup, StringComparison.Ordinal))
+            {
+                currentGroup = opt.Group;
+                <h3 class="h6 text-light mt-3 mb-2">@currentGroup</h3>
+            }
+            <div class="form-check text-light">
+                <input class="form-check-input" type="checkbox" name="SelectedIds" value="@opt.Id" id="palm_@opt.Id"
+                       @(selected.Contains(opt.Id) ? "checked=\"checked\"" : null) />
+                <label class="form-check-label" for="palm_@opt.Id">@opt.Label</label>
+            </div>
+        }
+    </div>
+}
+
+@if (Model.Result != null)
+{
+    var r = Model.Result;
+    <section class="glass-card p-4 mt-4">
+        <h2 class="h4 text-gold">Reading — @r.NativeName</h2>
+        <div class="mb-3">
+            @foreach (var s in r.Sections)
+            {
+                <div class="mb-3">
+                    <h3 class="h6 mb-1">@s.Label <span class="text-light-muted">(@s.Code)</span></h3>
+                    <p class="mb-0 small" style="white-space:pre-wrap;">@s.Text</p>
+                </div>
+            }
+        </div>
+        <details>
+            <summary class="text-gold">Full text (printable)</summary>
+            <pre class="mt-2 small text-light" style="white-space:pre-wrap;">@r.FullReading</pre>
+        </details>
+    </section>
+}

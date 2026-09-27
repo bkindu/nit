@@ -1,0 +1,61 @@
+@model NirmalaAstrology_Web.ViewModels.GocharPhalViewModel
+@{
+    Layout = "~/Views/Shared/_AppLayout.cshtml";
+    ViewBag.Title = "Gochar Phal";
+}
+
+<div class="page-header">
+    <h1>Gochar Phal</h1>
+    <p>MVP from VB6 <code>Text_Phalit.Gochar_Phal</code>: transit planets vs natal Lagna houses, English <code>gochar_reading</code> from MySQL. Entry/exit Saahe windows from <code>RasPrves</code> deferred.</p>
+</div>
+
+@if (!Model.HasBirthSession)
+{
+    <div class="alert alert-warning">Save a chart in <a href="@Url.Action("Index", "BirthData")">Birth Data</a> first.</div>
+}
+else
+{
+    <p class="text-light-muted">@Model.BirthSummary</p>
+    using (Html.BeginForm("Index", "Gochar", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger mb-3" })
+        <div class="glass-card p-4">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label text-light">Transit date</label>
+                    @Html.TextBoxFor(m => m.TransitDate, "{0:yyyy-MM-dd}", new { @class = "form-control glass-input", type = "date" })
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-gold">Calculate Gochar</button>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@if (Model.Result != null)
+{
+    var r = Model.Result;
+    <section class="glass-card p-4 mt-4">
+        <h2 class="h4 text-gold">@r.NativeName · transit @r.TransitDateLabel</h2>
+        <p class="text-light-muted mb-1">@r.BirthSummary</p>
+        <p>Natal Lagna: <strong>@r.NatalLagnaName</strong> (@r.NatalLagnaSign)</p>
+
+        @foreach (var p in r.Planets)
+        {
+            <div class="mb-3">
+                <h3 class="h6 text-gold mb-1">@p.Planet (@p.Code) · @p.TransitSignName · house @p.HouseFromNatalLagna</h3>
+                <p class="mb-0 small" style="white-space:pre-wrap;">@p.Reading</p>
+            </div>
+        }
+
+        <h3 class="h6 text-gold mt-3">Notes</h3>
+        <ul class="mb-0 small">
+            @foreach (var n in r.Notes)
+            {
+                <li>@n</li>
+            }
+        </ul>
+    </section>
+}

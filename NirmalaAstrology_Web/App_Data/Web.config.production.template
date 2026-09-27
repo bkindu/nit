@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  BigRock production Web.config — upload to httpdocs/Web.config
+  Fill Uid + Pwd from BigRock MySQL panel. Use Server=localhost on hosting.
+  Do NOT commit real passwords. No system.codedom (shared hosting).
+-->
+<configuration>
+  <configSections>
+    <section name="entityFramework" type="System.Data.Entity.Internal.ConfigFile.EntityFrameworkSection, EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" requirePermission="false" />
+  </configSections>
+
+  <connectionStrings>
+    <add name="NirmalaAstrologyDB"
+         connectionString="Server=localhost;Port=3306;Database=nit;Uid=nit;Pwd=YOUR_DB_PASSWORD;Charset=utf8mb4;SslMode=Preferred;AllowUserVariables=True;"
+         providerName="MySql.Data.MySqlClient" />
+  </connectionStrings>
+
+  <appSettings file="App_Data\smtp.local.config">
+    <add key="webpages:Version" value="3.0.0.0" />
+    <add key="webpages:Enabled" value="false" />
+    <add key="ClientValidationEnabled" value="true" />
+    <add key="UnobtrusiveJavaScriptEnabled" value="true" />
+    <add key="SiteName" value="Nirmala Astrology" />
+    <add key="SiteTagline" value="A Group of Scholars" />
+    <add key="EstablishedYear" value="1974" />
+    <add key="DefaultAdminUser" value="admin" />
+    <add key="DefaultAdminPassword" value="CHANGE_ME" />
+    <add key="Email:Enabled" value="false" />
+    <add key="Email:SmtpHost" value="nirmalaastrology.com" />
+    <add key="Email:SmtpPort" value="465" />
+    <add key="Email:EnableSsl" value="true" />
+    <add key="Email:FromAddress" value="" />
+    <add key="Email:FromName" value="Nirmala Astrology" />
+    <add key="Email:SmtpUser" value="" />
+    <add key="Email:SmtpPassword" value="" />
+    <add key="Email:ContactTo" value="" />
+    <add key="Email:AdminNotify" value="" />
+    <add key="Payment:Gateway" value="ManualUpi" />
+    <add key="Payment:UpiId" value="nirmala.astrology@okicici" />
+  </appSettings>
+
+  <system.web>
+    <globalization requestEncoding="utf-8" responseEncoding="utf-8" fileEncoding="utf-8" culture="en-IN" uiCulture="en-IN" />
+    <compilation targetFramework="4.8" />
+    <httpRuntime targetFramework="4.8" encoderType="System.Web.Security.AntiXss.AntiXssEncoder, System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <authentication mode="Forms">
+      <forms loginUrl="~/Auth/Login" timeout="480" cookieless="UseCookies" slidingExpiration="true" />
+    </authentication>
+    <sessionState mode="InProc" cookieless="UseCookies" timeout="60" />
+    <customErrors mode="Off" defaultRedirect="~/Error">
+      <error statusCode="404" redirect="~/Error/NotFound" />
+      <error statusCode="500" redirect="~/Error" />
+    </customErrors>
+    <pages>
+      <namespaces>
+        <add namespace="System.Web.Helpers" />
+        <add namespace="System.Web.Mvc" />
+        <add namespace="System.Web.Mvc.Ajax" />
+        <add namespace="System.Web.Mvc.Html" />
+        <add namespace="System.Web.Optimization" />
+        <add namespace="System.Web.Routing" />
+        <add namespace="NirmalaAstrology_Web.Helpers" />
+      </namespaces>
+    </pages>
+    <httpModules>
+    </httpModules>
+  </system.web>
+
+  <system.webServer>
+    <modules>
+    </modules>
+    <validation validateIntegratedModeConfiguration="false" />
+    <handlers>
+      <remove name="ExtensionlessUrlHandler-Integrated-4.0" />
+      <remove name="OPTIONSVerbHandler" />
+      <remove name="TRACEVerbHandler" />
+      <add name="ExtensionlessUrlHandler-Integrated-4.0" path="*." verb="*" type="System.Web.Handlers.TransferRequestHandler" preCondition="integratedMode,runtimeVersionv4.0" />
+    </handlers>
+    <staticContent>
+      <remove fileExtension=".woff" />
+      <mimeMap fileExtension=".woff" mimeType="font/woff" />
+      <remove fileExtension=".woff2" />
+      <mimeMap fileExtension=".woff2" mimeType="font/woff2" />
+      <remove fileExtension=".svg" />
+      <mimeMap fileExtension=".svg" mimeType="image/svg+xml" />
+    </staticContent>
+  </system.webServer>
+
+  <runtime>
+    <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
+      <dependentAssembly>
+        <assemblyIdentity name="Newtonsoft.Json" publicKeyToken="30ad4fe6b2a6aeed" />
+        <bindingRedirect oldVersion="0.0.0.0-13.0.0.0" newVersion="13.0.0.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="System.Web.Optimization" publicKeyToken="31bf3856ad364e35" />
+        <bindingRedirect oldVersion="1.0.0.0-1.1.0.0" newVersion="1.1.0.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="System.Web.Helpers" publicKeyToken="31bf3856ad364e35" />
+        <bindingRedirect oldVersion="1.0.0.0-3.0.0.0" newVersion="3.0.0.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="System.Web.Mvc" publicKeyToken="31bf3856ad364e35" />
+        <bindingRedirect oldVersion="1.0.0.0-5.3.0.0" newVersion="5.3.0.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="System.Web.WebPages" publicKeyToken="31bf3856ad364e35" />
+        <bindingRedirect oldVersion="1.0.0.0-3.0.0.0" newVersion="3.0.0.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="WebGrease" publicKeyToken="31bf3856ad364e35" />
+        <bindingRedirect oldVersion="0.0.0.0-1.6.5135.21930" newVersion="1.6.5135.21930" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="MySql.Data" publicKeyToken="c5687fc88969c44d" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-8.0.33.0" newVersion="8.0.33.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="System.Memory" publicKeyToken="cc7b13ffcd2ddd51" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-4.0.1.2" newVersion="4.0.1.2" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="System.Runtime.CompilerServices.Unsafe" publicKeyToken="b03f5f7f11d50a3a" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-6.0.3.0" newVersion="6.0.3.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="System.Threading.Tasks.Extensions" publicKeyToken="cc7b13ffcd2ddd51" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-4.2.4.0" newVersion="4.2.4.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="Microsoft.Web.Infrastructure" publicKeyToken="31bf3856ad364e35" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-2.0.0.0" newVersion="2.0.0.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="Antlr3.Runtime" publicKeyToken="eb42632606e9261f" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-3.5.0.2" newVersion="3.5.0.2" />
+      </dependentAssembly>
+    </assemblyBinding>
+  </runtime>
+</configuration>

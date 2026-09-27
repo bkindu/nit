@@ -1,0 +1,1 @@
+<%@ Application Codebehind="Global.asax.cs" Inherits="NirmalaAstrology_Web.MvcApplication" Language="C#" %>

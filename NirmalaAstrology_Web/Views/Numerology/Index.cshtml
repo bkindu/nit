@@ -1,0 +1,358 @@
+@using NirmalaAstrology_Web.Models
+@model NumerologyViewModel
+
+@{
+    ViewBag.Title = "Numerology Calculator - Nirmala Astrology";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .numerology-form-section {
+        padding: 50px 0 30px;
+    }
+    .numerology-form-card {
+        background: #fff;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 5px 30px rgba(0,0,0,0.08);
+        border: 1px solid rgba(74, 20, 140, 0.05);
+        max-width: 650px;
+        margin: 0 auto;
+    }
+    .numerology-form-card .form-label {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 500;
+        color: var(--primary-dark);
+        font-size: 0.92rem;
+        margin-bottom: 6px;
+    }
+    .numerology-form-card .form-control {
+        border: 1.5px solid #e0d5f0;
+        border-radius: 12px;
+        padding: 14px 18px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #fdfcff;
+    }
+    .numerology-form-card .form-control:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(74, 20, 140, 0.1);
+    }
+    .numerology-results-section {
+        padding: 30px 0 80px;
+    }
+    .number-result-card {
+        background: #fff;
+        border-radius: 20px;
+        padding: 35px 30px;
+        box-shadow: 0 5px 25px rgba(0,0,0,0.06);
+        border: 1px solid rgba(74, 20, 140, 0.05);
+        margin-bottom: 30px;
+        transition: all 0.4s ease;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+    .number-result-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+    }
+    .number-result-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 40px rgba(74, 20, 140, 0.12);
+    }
+    .nrc-header {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        margin-bottom: 18px;
+    }
+    .nrc-number {
+        width: 70px;
+        height: 70px;
+        min-width: 70px;
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 800;
+        font-size: 2rem;
+        color: #fff;
+    }
+    .nrc-title {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;
+        color: var(--primary-dark);
+        font-size: 1.15rem;
+        margin-bottom: 3px;
+    }
+    .nrc-subtitle {
+        font-size: 0.82rem;
+        color: #aaa;
+    }
+    .nrc-interpretation {
+        color: #555;
+        line-height: 1.8;
+        font-size: 0.95rem;
+    }
+    .nrc-interpretation strong {
+        color: var(--primary);
+    }
+
+    /* Number color coding */
+    .num-1::before, .num-1 .nrc-number { background: linear-gradient(135deg, #FF4136, #c0392b); }
+    .num-2::before, .num-2 .nrc-number { background: linear-gradient(135deg, #B10DC9, #8e44ad); }
+    .num-3::before, .num-3 .nrc-number { background: linear-gradient(135deg, #FFDC00, #f39c12); }
+    .num-4::before, .num-4 .nrc-number { background: linear-gradient(135deg, #0074D9, #2980b9); }
+    .num-5::before, .num-5 .nrc-number { background: linear-gradient(135deg, #39CCCC, #16a085); }
+    .num-6::before, .num-6 .nrc-number { background: linear-gradient(135deg, #2ECC40, #27ae60); }
+    .num-7::before, .num-7 .nrc-number { background: linear-gradient(135deg, #85144b, #6c3483); }
+    .num-8::before, .num-8 .nrc-number { background: linear-gradient(135deg, #4a148c, #311b92); }
+    .num-9::before, .num-9 .nrc-number { background: linear-gradient(135deg, #FF851B, #d35400); }
+    .num-11::before, .num-11 .nrc-number { background: linear-gradient(135deg, #ffd700, #daa520); }
+    .num-22::before, .num-22 .nrc-number { background: linear-gradient(135deg, #ffd700, #b8860b); }
+    .num-33::before, .num-33 .nrc-number { background: linear-gradient(135deg, #ffd700, #996515); }
+
+    /* Mystical decoration */
+    .mystical-deco {
+        text-align: center;
+        margin-bottom: 40px;
+        position: relative;
+    }
+    .mystical-deco .sacred-geometry {
+        font-size: 4rem;
+        color: var(--accent);
+        opacity: 0.15;
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 0;
+    }
+    .mystical-deco .deco-text {
+        position: relative;
+        z-index: 1;
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.1rem;
+        color: var(--primary);
+        font-weight: 600;
+    }
+    .mystical-deco .deco-sub {
+        position: relative;
+        z-index: 1;
+        font-size: 0.9rem;
+        color: #888;
+    }
+
+    @@media (max-width: 576px) {
+        .numerology-form-card { padding: 25px 20px; }
+        .number-result-card { padding: 25px 20px; }
+    }
+</style>
+
+<!-- Page Header -->
+<section class="page-header-banner">
+    <div class="container">
+        <h1><i class="fas fa-hashtag me-3"></i>Numerology Calculator</h1>
+        <p class="mt-2 mb-0">Discover the hidden power of numbers in your life</p>
+    </div>
+</section>
+
+<!-- Numerology Form -->
+<section class="numerology-form-section">
+    <div class="container">
+        <div class="numerology-form-card">
+            <div class="text-center mb-4">
+                <div style="font-size: 2.5rem; color: var(--accent); margin-bottom: 10px;">
+                    <i class="fas fa-infinity"></i>
+                </div>
+                <h3 class="heading-font" style="font-weight: 700; color: var(--primary);">Enter Your Details</h3>
+                <p class="text-muted mb-0">Your name and birth date reveal the cosmic numbers that shape your destiny</p>
+            </div>
+
+            @using (Html.BeginForm("Index", "Numerology", FormMethod.Post, new { id = "numerologyForm" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label">Full Name (as per birth certificate)</label>
+                        @Html.TextBoxFor(m => m.Name, new { @class = "form-control", placeholder = "Enter your full name" })
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Date of Birth</label>
+                        @Html.TextBoxFor(m => m.DateOfBirth, new { @class = "form-control", type = "date", required = "required" })
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Nickname (optional)</label>
+                        @Html.TextBoxFor(m => m.NickName, new { @class = "form-control", placeholder = "Nickname" })
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Vehicle / PAN / Number (optional)</label>
+                        @Html.TextBoxFor(m => m.VehicleOrPan, new { @class = "form-control", placeholder = "A1B2345" })
+                    </div>
+                    <div class="col-12 text-center mt-3">
+                        <button type="submit" class="btn btn-gold btn-lg px-5">
+                            <i class="fas fa-calculator me-2"></i>Reveal My Numbers
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+@if (Model.HasResults)
+{
+    var fullAccess = ViewBag.FullAccess as bool? == true;
+    <!-- Results -->
+    <section class="numerology-results-section letterhead-report">
+        <div class="container">
+            <div class="letterhead-export-bar no-print text-center mb-3">
+                @if (fullAccess)
+                {
+                    <span class="text-muted small">Admin: full numerology module. Official full PDF remains Admin workspace.</span>
+                }
+                else
+                {
+                    <span class="text-muted small">Public view shows core numbers only.</span>
+                    <a class="btn btn-sm btn-gold ms-2" href="@Url.Action("BasicNumerology", "PublicReport")">Export  basic PDF</a>
+                }
+            </div>
+            <div class="mystical-deco">
+                <div class="sacred-geometry">âœ¦</div>
+                <div class="deco-text">@(fullAccess ? "Your Numerology Profile" : "Basic Numerology")</div>
+                <div class="deco-sub">For <strong>@Model.Name</strong> born on @Model.DateOfBirth.ToString("dd MMM yyyy")</div>
+            </div>
+
+            <div class="row g-4">
+                <!-- Life Path Number -->
+                <div class="col-lg-6">
+                    <div class="number-result-card num-@Model.Result.LifePathNumber">
+                        <div class="nrc-header">
+                            <div class="nrc-number">@Model.Result.LifePathNumber</div>
+                            <div>
+                                <div class="nrc-title">Life Path Number</div>
+                                <div class="nrc-subtitle">The most important number in numerology</div>
+                            </div>
+                        </div>
+                        <div class="nrc-interpretation">
+                            @Model.Result.LifePathInterpretation
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Destiny Number -->
+                <div class="col-lg-6">
+                    <div class="number-result-card num-@Model.Result.DestinyNumber">
+                        <div class="nrc-header">
+                            <div class="nrc-number">@Model.Result.DestinyNumber</div>
+                            <div>
+                                <div class="nrc-title">Destiny Number</div>
+                                <div class="nrc-subtitle">Also known as Expression Number</div>
+                            </div>
+                        </div>
+                        <div class="nrc-interpretation">
+                            @Model.Result.DestinyInterpretation
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Soul Urge Number -->
+                <div class="col-lg-6">
+                    <div class="number-result-card num-@Model.Result.SoulUrgeNumber">
+                        <div class="nrc-header">
+                            <div class="nrc-number">@Model.Result.SoulUrgeNumber</div>
+                            <div>
+                                <div class="nrc-title">Soul Urge Number</div>
+                                <div class="nrc-subtitle">Heart's desire</div>
+                            </div>
+                        </div>
+                        <div class="nrc-interpretation">
+                            @Model.Result.SoulUrgeInterpretation
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personality Number -->
+                <div class="col-lg-6">
+                    <div class="number-result-card num-@Model.Result.PersonalityNumber">
+                        <div class="nrc-header">
+                            <div class="nrc-number">@Model.Result.PersonalityNumber</div>
+                            <div>
+                                <div class="nrc-title">Personality Number</div>
+                                <div class="nrc-subtitle">Outer personality</div>
+                            </div>
+                        </div>
+                        <div class="nrc-interpretation">
+                            @Model.Result.PersonalityInterpretation
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="number-result-card mt-4">
+                <h4 class="nrc-title">Basic summary</h4>
+                <table class="table table-sm">
+                    <tr><th>Birth Number</th><td>@Model.Result.BirthdayNumber</td></tr>
+                    <tr><th>Name Root Number</th><td>@Model.Result.NameRootNumber</td></tr>
+                    @if (!string.IsNullOrEmpty(Model.Result.RulingPlanet))
+                    {
+                        <tr><th>Ruling Planet</th><td>@Model.Result.RulingPlanet</td></tr>
+                    }
+                </table>
+            </div>
+
+            @if (fullAccess)
+            {
+            <div class="number-result-card mt-4">
+                <h4 class="nrc-title">Admin â€” extended name analysis</h4>
+                <table class="table table-sm">
+                    <tr><th>Compound Name Number</th><td>@Model.Result.CompoundNameNumber</td></tr>
+                    <tr><th>Master Number</th><td>@Model.Result.MasterNumberText</td></tr>
+                    <tr><th>Friendship</th><td>@Model.Result.FriendshipWithFullName</td></tr>
+                    <tr><th>Advice</th><td>@Model.Result.FriendshipAdvice</td></tr>
+                    <tr><th>Letters</th><td>@Model.Result.FullNameLetters</td></tr>
+                    <tr><th>Cheiro Numbers</th><td>@Model.Result.FullNameDigits</td></tr>
+                    <tr><th>Vowels</th><td>@Model.Result.VowelCount (@Model.Result.Vowels)</td></tr>
+                    <tr><th>Consonants</th><td>@Model.Result.ConsonantCount (@Model.Result.Consonants)</td></tr>
+                    <tr><th>Missing Numbers</th><td>@(String.IsNullOrWhiteSpace(Model.Result.MissingNameNumbers) ? "No count 1 thru 9 missing" : Model.Result.MissingNameNumbers)</td></tr>
+                    <tr><th>Highest Count</th><td>@Model.Result.HighestNameNumber</td></tr>
+                </table>
+            </div>
+            <div class="row g-4 mt-2">
+                <div class="col-lg-6"><div class="number-result-card"><h4 class="nrc-title">Pyramid of Your Name</h4><pre class="mb-0">@String.Join("\n", Model.Result.PyramidRows)</pre><p class="mt-3"><strong>Pyramid Number:</strong> @Model.Result.PyramidNumber</p></div></div>
+                <div class="col-lg-6"><div class="number-result-card"><h4 class="nrc-title">Planes of Expression</h4>
+                    <table class="table table-sm">
+                    <tr><th>Mental</th><td>@Model.Result.MentalPlaneCount</td></tr><tr><th>Physical</th><td>@Model.Result.PhysicalPlaneCount</td></tr><tr><th>Emotional</th><td>@Model.Result.EmotionalPlaneCount</td></tr><tr><th>Intuitive</th><td>@Model.Result.IntuitivePlaneCount</td></tr><tr><th>Dominant Plane</th><td>@Model.Result.ExpressionPlane</td></tr>
+                    </table>
+                </div></div>
+            </div>
+            <div class="number-result-card mt-4">
+                <h4 class="nrc-title">Name variations</h4>
+                <table class="table table-sm"><thead><tr><th>Name</th><th>Compound</th><th>Root</th><th>Friendship</th></tr></thead><tbody>
+                @foreach (var variation in Model.Result.NameVariations) { <tr><td>@variation.Name</td><td>@variation.CompoundNumber</td><td>@variation.RootNumber</td><td>@variation.Friendship</td></tr> }
+                </tbody></table>
+            </div>
+            <div class="row g-4 mt-2"><div class="col-lg-6"><div class="number-result-card"><h4 class="nrc-title">Essence Periods</h4><div class="table-responsive"><table class="table table-sm"><thead><tr><th>Letter</th><th>Number</th><th>Age Range</th></tr></thead><tbody>@foreach (var e in Model.Result.EssencePeriods) { <tr><td>@e.Letter</td><td>@e.Number</td><td>@e.FromAge - @e.ToAge</td></tr> }</tbody></table></div></div></div>
+                <div class="col-lg-6"><div class="number-result-card"><h4 class="nrc-title">Pinnacles and Challenges</h4><table class="table table-sm"><thead><tr><th>Type</th><th>Number</th><th>Period</th></tr></thead><tbody>@foreach (var p in Model.Result.Pinnacles) { <tr><td>Pinnacle</td><td>@p.Number</td><td>@p.Period</td></tr> } @foreach (var c in Model.Result.ChallengesDetailed) { <tr><td>@c.Period</td><td>@c.Number</td><td>@c.Reading</td></tr> }</tbody></table></div></div></div>
+            }
+            else
+            {
+                <div class="alert alert-info mt-4">Full numerology (pyramid, planes, essence, pinnacles) is available to Admin only. Use <a href="@Url.Action("BasicNumerology", "PublicReport")">Basic Numerology PDF</a> for a letterhead export of core numbers.</div>
+            }
+
+            <div class="text-center mt-4">
+                <a href="@Url.Action("Index", "PublicReport")" class="btn btn-outline-gold btn-lg me-2">Reports &amp; Pricing</a>
+                <a href="@Url.Action("Index", "Home")#kundli-section" class="btn btn-primary-custom btn-lg">
+                    <i class="fas fa-dharmachakra me-2"></i>Also Get Your Basic Kundli
+                </a>
+            </div>
+        </div>
+    </section>
+}

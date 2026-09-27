@@ -1,0 +1,42 @@
+@model System.Collections.Generic.IList<NirmalaAstrology_Web.Models.ArticleRecord>
+@{
+    ViewBag.Title = "Articles";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<section class="py-5 section-dark" style="margin-top:80px;">
+    <div class="container">
+        <div class="section-heading mb-4">
+            <h1 class="section-title">Astrology <span class="text-gold">Articles</span></h1>
+            <p class="section-subtitle">Guidance and insights from Nirmala Astrology</p>
+            <div class="heading-line"><span></span></div>
+        </div>
+        <div class="row g-4">
+            @if (Model == null || Model.Count == 0)
+            {
+                <div class="col-12">
+                    <p class="text-light-muted text-center">Articles will appear here once published by the admin.</p>
+                </div>
+            }
+            else
+            {
+                foreach (var a in Model)
+                {
+                    <div class="col-md-6 col-lg-4">
+                        <a href="@Url.Action("Detail", "Articles", new { slug = a.Slug })" class="home-service-card h-100 text-decoration-none">
+                            @if (!string.IsNullOrWhiteSpace(a.ImageUrl))
+                            {
+                                <img src="@Url.Content(a.ImageUrl)" alt="" class="img-fluid mb-2 rounded" style="max-height:140px;width:100%;object-fit:cover;" />
+                            }
+                            else
+                            {
+                                <i class="fas fa-newspaper"></i>
+                            }
+                            <strong>@a.Title</strong>
+                            <span>@(string.IsNullOrWhiteSpace(a.Summary) ? "Read more" : (a.Summary.Length > 120 ? a.Summary.Substring(0, 117) + "…" : a.Summary))</span>
+                        </a>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</section>

@@ -1,0 +1,40 @@
+@model List<NirmalaAstrology_Web.Models.ZodiacModel>
+@{
+    ViewBag.Title = "Zodiac Signs";
+}
+
+<section class="page-header">
+    <div class="container">
+        <h1>Zodiac Signs</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Home</a></li>
+                <li class="breadcrumb-item active">Zodiac</li>
+            </ol>
+        </nav>
+    </div>
+</section>
+
+<section class="section-padding">
+    <div class="container">
+        <div class="section-heading">
+            <h2>All Zodiac Signs</h2>
+            <div class="heading-underline"></div>
+        </div>
+        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4">
+            @foreach (var sign in Model)
+            {
+                <div class="col">
+                    <a href="@Url.Action("Detail", "Zodiac", new { name = sign.UrlName })" class="text-decoration-none">
+                        <div class="zodiac-card zodiac-@sign.UrlName">
+                            <span class="zodiac-symbol">@Html.Raw(sign.Icon)</span>
+                            <h5>@sign.Name</h5>
+                            <div class="zodiac-date">@sign.HindiName</div>
+                            <div class="zodiac-element">@sign.Element</div>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</section>

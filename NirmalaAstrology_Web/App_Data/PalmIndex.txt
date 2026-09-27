@@ -1,0 +1,147 @@
+TYPE OF PALM
+1.Positive Palm (P1)
+2.Negative Palm (P2)
+3.General Palm (P3)
+
+TYPE OF HAND
+1.Elementary Hand (HE)
+2.Square Hand (HQ)
+3.Philosophical Hand (HP)
+4.Spatulate Hand (HS)
+5.Conical Hand (HC)
+6.Idealistic Hand (HI)
+7.Mixed Hand (HM)
+
+TYPE OF THUMB
+1.Supple Jointed Thumb (TS)
+2.Firm Jointed Thumb (TF)
+3.Much Opened Thumb (TO)
+4.Not much opened Thumb (TN)
+5.Straight Thumb (TT)
+6.Waist Like Thumb (TW)
+7.Clubbed Thumb (TC)
+
+LINE OF HEAD
+1.Positive Line of Head (D1)
+2.Negative Line of Head (D2)
+COMMENCEMENT OF LINE OF HEAD
+1.from Mount of Jupiter & touching line of Life (D3)
+2.from Mount of Jupiter and less spaced from line of Life (D4)
+3.from Mount of Jupiter and much spaced from line of Life (D5)
+4.joining Line of Life at the beginning (D6)
+5.from Inside the Lower Mount of Mars (D7)
+TERMINATION OF LINE OF HEAD
+1.terminating towards the Mount of Upper Mars (D8)
+2.sloping between the Mounts Upper Mars and Moon (D9)
+3.terminating towards the Mount Moon (D10)
+4.terminating with a fork at the end (D11)
+
+MISCELLANEOUS TYPE OF LINE OF HEAD
+1.Bridge between Line of Head and line of Heart (D12)
+2.Head and Heart conjoined and forming one line (D13)
+
+LINE OF FATE
+1.Positive Line of Fate (F1)
+2.Negative Line of Fate (F2)
+3.General Line of Fate (F2A)
+4.Line of Fate Rising from the Wrist (F1A)
+RISING POINT OF LINE OF FATE
+1.from the Line of Life at a Higher Point (F3)
+2.from the Line of Life at a Lower Point (F4)
+3.from the Mount of Luna (F5)
+4.from Plain of Mars (F12)
+5.1st Rising from Luna & 2nd from Plan of Mars (F6)
+6.from the Line of Head (F13)
+7.from the Line of Heart (F14)
+TERMINATION OF LINE OF FATE
+1.towards the Mount of Guru (F7)
+2.Reaching the base of Middle Finger (F8)
+3.Stopped by the Line of Heart (F9)
+4.Stopped by the Line of Head (F11)
+5.Missing in Positive Hand (F15)
+6.Line of Fate Missing in Negative Hand (F16)
+7.Double Line of Fate (F17)
+
+LINE OF HEART
+1.Positive type of Line of Heart (H1)
+2.Negative type of Line of Heart (H2)
+COMMENCEMENT OF LINE OF HEART
+1.from base of 1st Finger (H3)
+2.from Centre of Mount of Jupiter (H4)
+3.from Centre of 1st & 2nd Fingers (H5)
+4.from Mount of Saturn (H6)
+5.from between 1st & 2nd Fingers (H7)
+6.1st from Jupiter & 2nd from Saturn (H8)
+7.Curving below Mount of Jupiter (H9)
+8.Low Lying towards Head (H10)
+
+LINE OF LIFE
+1.Positive type of Line of Life (L1)
+2.Negative type of Line of Life (L2)
+Line of Life : General
+1.from Mount of Jupiter (L3)
+2.all the 3 joined together (L4)
+3.towards Mount of Venus (L5)
+4.towards Mount of Moon (L6)
+
+LINE OF SUN
+1.Positive type of Line of Sun (S1)
+2.Negative type of Line of Sun (S2)
+
+Commencement of Line of Sun
+1.from Mount of Luna (S3)
+2.from Plain of Mars (S4)
+3.from Line of Head (S5)
+4.from Line of Heart (S6)
+5.Many Sun Lines (S7)
+6.Positive Sun Line on weak Palm (S8)
+
+LINE OF HEALTH
+1.Positive type of Line of Health (HL1)
+2.Negative type of Line of Health (HL2)
+Commencement of Line of Health
+3.Missing on the Palm (HL3)
+4.in a Mixed Form (HL4)
+
+LINE OF UNION (MARRIAGE)
+1.Positive type of Line of Line of Marriage (M1)
+2.Negative type of Line of Line of Marriage (M2)
+GENERAL
+3.Many Lines (M3)
+4.Ending with a Fork (M4)
+
+LINES OF CHILDREN
+1.Positive type of Line of ChildLine (C1)
+2.Negative type of Line of ChildLine (C2)
+
+GIRDLE OF VENUS
+Tracings of Girdle of Venus on Palm (GV)
+RING OF SATURN
+Tracings of Ring of Saturn on Palm (RS)
+
+LINE OF INTUITION
+Tracings of Line of Intuition on Palm (LI)
+
+RING OF SOLOMAN
+Tracings of Ring of Soloman on Palm (RG)
+
+TRAVEL LINES
+Tracings of Travel Line on Palm (TL)
+
+LINE OF MARS
+Tracings of Line of Mars on Palm (ML)
+
+DIFFERENCE BETWEEN THE TWO HANDS
+1.Right Hand Equal to Left Hand (REL)
+2.Right Hand Stronger than Left: male (RSL)
+3.Right Hand Weaker than Left: male (RWL)
+4.Left Hand Stronger than Right:female (RSLF)
+5.Left Hand Weaker than Right: female (RWLF)
+
+GREAT TRIANGLE
+1.Finely marked Great Triangle (GT)
+2.Normal Great Triangle (GT1)
+
+QUADRANGLE
+1.Positive Quadrangle (Q1)
+2.Negative Quadrangle (Q2)

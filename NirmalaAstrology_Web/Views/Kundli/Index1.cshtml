@@ -1,0 +1,407 @@
+@using NirmalaAstrology_Web.Models
+@model KundliViewModel
+
+@{
+    ViewBag.Title = "Free Kundli Calculator - Nirmala Astrology";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .kundli-form-section { padding: 50px 0 30px; }
+    .kundli-form-card {
+        background: #fff; border-radius: 20px; padding: 40px;
+        box-shadow: 0 5px 30px rgba(0,0,0,0.08);
+        border: 1px solid rgba(74,20,140,0.05); max-width: 850px; margin: 0 auto;
+    }
+    .kundli-form-card .form-label {
+        font-family: 'Poppins', sans-serif; font-weight: 500;
+        color: var(--primary-dark); font-size: 0.92rem; margin-bottom: 6px;
+    }
+    .kundli-form-card .form-control,
+    .kundli-form-card .form-select {
+        border: 1.5px solid #e0d5f0; border-radius: 12px;
+        padding: 12px 16px; font-size: 0.95rem;
+        transition: all 0.3s ease; background: #fdfcff;
+    }
+    .kundli-form-card .form-control:focus,
+    .kundli-form-card .form-select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(74,20,140,0.1);
+    }
+
+    /* NORTH INDIAN DIAMOND CHART */
+    .kundli-results-section { padding: 30px 0 70px; }
+    .chart-container {
+        position: relative; width: 420px; max-width: 100%; margin: 0 auto;
+        aspect-ratio: 1;
+    }
+    .chart-diamond {
+        position: absolute; display: flex; flex-direction: column;
+        align-items: center; justify-content: center; text-align: center;
+        font-size: 0.8rem; font-weight: 600; color: var(--primary-dark);
+        background: rgba(255,255,255,0.95); border: 1.5px solid #d1c4e9;
+        transition: all 0.3s ease; overflow: hidden; padding: 2px; line-height: 1.3;
+        z-index: 2;
+    }
+    .chart-diamond:hover {
+        background: #f3e5f5; border-color: var(--primary);
+        box-shadow: 0 2px 10px rgba(74,20,140,0.15); z-index: 3;
+    }
+    .chart-diamond .house-num {
+        display: block; font-size: 0.6rem; color: #999; font-weight: 400; margin-bottom: 1px;
+    }
+    .chart-diamond .rashi-label {
+        display: block; font-size: 0.65rem; color: #aaa; font-weight: 600; margin-bottom: 1px;
+    }
+    .chart-diamond .planet-text {
+        display: block; font-family: 'Poppins', sans-serif;
+        font-weight: 700; font-size: 0.72rem; color: var(--primary);
+    }
+    .chart-svg {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        z-index: 1; pointer-events: none;
+    }
+
+    /* North Indian diamond house positions */
+    .house-1  { top:0%;     left:33.33%; width:33.33%; height:16.67%; }
+    .house-2  { top:16.67%; left:66.67%; width:33.33%; height:16.67%; }
+    .house-3  { top:33.33%; left:83.33%; width:16.67%; height:33.33%; }
+    .house-4  { top:66.67%; left:66.67%; width:33.33%; height:16.67%; }
+    .house-5  { top:83.33%; left:33.33%; width:33.33%; height:16.67%; }
+    .house-6  { top:66.67%; left:0%;     width:33.33%; height:16.67%; }
+    .house-7  { top:33.33%; left:0%;     width:16.67%; height:33.33%; }
+    .house-8  { top:16.67%; left:0%;     width:33.33%; height:16.67%; }
+    .house-9  { top:0%;     left:0%;     width:33.33%; height:16.67%; }
+    .house-10 { top:16.67%; left:16.67%; width:33.33%; height:16.67%; }
+    .house-11 { top:33.33%; left:33.33%; width:16.67%; height:33.33%; }
+    .house-12 { top:66.67%; left:33.33%; width:33.33%; height:16.67%; }
+
+    /* Planet Table */
+    .planet-table-section { margin-top: 50px; }
+    .planet-table { border-radius: 16px; overflow: hidden; box-shadow: 0 5px 25px rgba(0,0,0,0.06); }
+    .planet-table thead th {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: #fff; font-family: 'Poppins', sans-serif; font-weight: 600;
+        font-size: 0.9rem; padding: 14px 18px; border: none;
+    }
+    .planet-table tbody td {
+        padding: 12px 18px; vertical-align: middle; font-size: 0.92rem;
+        border-bottom: 1px solid #f0ebf5; color: #444;
+    }
+    .planet-table tbody tr:hover { background: #f8f4ff; }
+    .planet-table .planet-icon-cell { font-size: 1.3rem; width: 50px; }
+    .planet-table .planet-name-cell {
+        font-weight: 600; color: var(--primary-dark); font-family: 'Poppins', sans-serif;
+    }
+
+    .kundli-summary-cards { margin-bottom: 40px; }
+    .summary-card {
+        background: #fff; border-radius: 16px; padding: 25px 20px; text-align: center;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        border: 1px solid rgba(74,20,140,0.05); height: 100%;
+        transition: all 0.3s ease;
+    }
+    .summary-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(74,20,140,0.1); }
+    .summary-card .sc-icon { font-size: 1.8rem; color: var(--primary); margin-bottom: 12px; }
+    .summary-card .sc-label {
+        font-size: 0.8rem; color: #999; text-transform: uppercase;
+        letter-spacing: 1px; font-family: 'Poppins', sans-serif; margin-bottom: 5px;
+    }
+    .summary-card .sc-value {
+        font-family: 'Poppins', sans-serif; font-weight: 700;
+        color: var(--primary-dark); font-size: 1.05rem;
+    }
+
+    @@media (max-width: 576px) {
+        .kundli-form-card { padding: 25px 18px; }
+        .chart-container { width: 320px; }
+        .chart-diamond .planet-text { font-size: 0.6rem; }
+        .chart-diamond .rashi-label { font-size: 0.55rem; }
+    }
+</style>
+
+<!-- Page Header -->
+<section class="page-header-banner">
+    <div class="container">
+        <h1><i class="fas fa-birth-chart me-3"></i>Free Kundli Calculator</h1>
+        <p class="mt-2 mb-0">Generate your North Indian style birth chart with Vedic planetary positions</p>
+    </div>
+</section>
+
+<!-- Kundli Form -->
+<section class="kundli-form-section">
+    <div class="container">
+        <div class="kundli-form-card">
+            <h3 class="heading-font text-center mb-1" style="font-weight:700; color:var(--primary);">
+                <i class="bi bi-sun-fill me-2" style="color:var(--accent);"></i>Enter Your Birth Details
+            </h3>
+            <p class="text-center text-muted mb-4">Provide accurate birth details for precise Kundli generation</p>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="alert alert-danger">
+                    @Html.ValidationSummary(true)
+                </div>
+            }
+
+            @using (Html.BeginForm("Index", "Kundli", FormMethod.Post, new { @id = "kundliForm" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="row g-3 justify-content-center">
+                    <div class="col-lg-2 col-md-4 col-4">
+                        <label class="form-label">Day</label>
+                        @Html.DropDownListFor(m => m.Day,
+                            Enumerable.Range(1, 31).Select(d => new SelectListItem { Text = d.ToString(), Value = d.ToString(), Selected = (Model != null && Model.Day == d) }),
+                            "Day", new { @class = "form-select" })
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-4">
+                        <label class="form-label">Month</label>
+                        @Html.DropDownListFor(m => m.Month,
+                            Enumerable.Range(1, 12).Select(d => new SelectListItem { Text = System.Globalization.CultureInfo.InvariantCulture.DateTimeFormat.GetMonthName(d), Value = d.ToString(), Selected = (Model != null && Model.Month == d) }),
+                            "Month", new { @class = "form-select" })
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-4">
+                        <label class="form-label">Year</label>
+                        @Html.DropDownListFor(m => m.Year,
+                            Enumerable.Range(1950, DateTime.Now.Year - 1949).Reverse().Select(y => new SelectListItem { Text = y.ToString(), Value = y.ToString(), Selected = (Model != null && Model.Year == y) }),
+                            "Year", new { @class = "form-select" })
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-6">
+                        <label class="form-label">Hour</label>
+                        @Html.DropDownListFor(m => m.Hour,
+                            Enumerable.Range(0, 24).Select(h => new SelectListItem { Text = h.ToString("D2"), Value = h.ToString(), Selected = (Model != null && Model.Hour == h) }),
+                            "Hr", new { @class = "form-select" })
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-6">
+                        <label class="form-label">Minute</label>
+                        @Html.DropDownListFor(m => m.Minute,
+                            Enumerable.Range(0, 60).Select(mn => new SelectListItem { Text = mn.ToString("D2"), Value = mn.ToString(), Selected = (Model != null && Model.Minute == mn) }),
+                            "Min", new { @class = "form-select" })
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <label class="form-label">Place of Birth</label>
+                        @Html.DropDownListFor(m => m.Place, (SelectList)ViewBag.Cities, "Select City", new { @class = "form-select" })
+                    </div>
+                    <div class="col-12 text-center mt-4">
+                        <button type="submit" class="btn btn-gold btn-lg px-5">
+                            <i class="fas fa-calculator me-2"></i>Generate Kundli
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+@if (Model.HasResults && Model.Result != null)
+{
+    <!-- Kundli Results -->
+    <section class="kundli-results-section">
+        <div class="container">
+            <h2 class="section-title">Your Kundli Chart</h2>
+            <div class="section-divider"></div>
+            <p class="section-subtitle">North Indian Diamond Style Birth Chart</p>
+
+            <!-- Summary Cards -->
+            <div class="row g-3 kundli-summary-cards">
+                <div class="col-6 col-md-3">
+                    <div class="summary-card">
+                        <div class="sc-icon"><i class="fas fa-calendar-alt"></i></div>
+                        <div class="sc-label">Date of Birth</div>
+                        <div class="sc-value">@Model.Day/@Model.Month/@Model.Year</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="summary-card">
+                        <div class="sc-icon"><i class="fas fa-clock"></i></div>
+                        <div class="sc-label">Time of Birth</div>
+                        <div class="sc-value">@Model.Hour.ToString("D2"):@Model.Minute.ToString("D2")</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="summary-card">
+                        <div class="sc-icon"><i class="fas fa-map-marker-alt"></i></div>
+                        <div class="sc-label">Place</div>
+                        <div class="sc-value">@(Model.Place ?? "Unknown")</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="summary-card">
+                        <div class="sc-icon"><i class="fas fa-star"></i></div>
+                        <div class="sc-label">Ascendant</div>
+                        <div class="sc-value">@(Model.Result.AscendantRashiName ?? "-")</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- North Indian Diamond Chart -->
+            <div class="row justify-content-center mb-5">
+                <div class="col-lg-7 col-md-9">
+                    <div class="chart-container">
+                        <!-- SVG for diamond lines -->
+                        <svg class="chart-svg" viewBox="0 0 420 420" preserveAspectRatio="xMidYMid meet">
+                            <polygon points="210,0 420,210 210,420 0,210" fill="none" stroke="#9c27b0" stroke-width="2.5"/>
+                            <line x1="0" y1="210" x2="420" y2="210" stroke="#ce93d8" stroke-width="1.5"/>
+                            <line x1="210" y1="0" x2="210" y2="420" stroke="#ce93d8" stroke-width="1.5"/>
+                            <line x1="0" y1="210" x2="210" y2="0" stroke="#ce93d8" stroke-width="1.5"/>
+                            <line x1="210" y1="0" x2="420" y2="210" stroke="#ce93d8" stroke-width="1.5"/>
+                            <line x1="420" y1="210" x2="210" y2="420" stroke="#ce93d8" stroke-width="1.5"/>
+                            <line x1="210" y1="420" x2="0" y2="210" stroke="#ce93d8" stroke-width="1.5"/>
+                        </svg>
+
+                        @{
+                            Func<int, string> getHousePlanets = (houseNum) =>
+                            {
+                                var house = Model.Result.Houses.FirstOrDefault(h => h.HouseNumber == houseNum);
+                                if (house == null || house.Planets == null || house.Planets.Count == 0) return "";
+                                return string.Join(" ", house.Planets);
+                            };
+                            Func<int, string> getHouseRashi = (houseNum) =>
+                            {
+                                var house = Model.Result.Houses.FirstOrDefault(h => h.HouseNumber == houseNum);
+                                return house != null ? house.RashiName : "?";
+                            };
+                        }
+
+                        <!-- 12 Houses -->
+                        <div class="chart-diamond house-1">
+                            <span class="house-num">1 - Asc</span>
+                            <span class="rashi-label">@getHouseRashi(1)</span>
+                            <span class="planet-text">@getHousePlanets(1)</span>
+                        </div>
+                        <div class="chart-diamond house-2">
+                            <span class="house-num">2</span>
+                            <span class="rashi-label">@getHouseRashi(2)</span>
+                            <span class="planet-text">@getHousePlanets(2)</span>
+                        </div>
+                        <div class="chart-diamond house-3">
+                            <span class="house-num">3</span>
+                            <span class="rashi-label">@getHouseRashi(3)</span>
+                            <span class="planet-text">@getHousePlanets(3)</span>
+                        </div>
+                        <div class="chart-diamond house-4">
+                            <span class="house-num">4</span>
+                            <span class="rashi-label">@getHouseRashi(4)</span>
+                            <span class="planet-text">@getHousePlanets(4)</span>
+                        </div>
+                        <div class="chart-diamond house-5">
+                            <span class="house-num">5</span>
+                            <span class="rashi-label">@getHouseRashi(5)</span>
+                            <span class="planet-text">@getHousePlanets(5)</span>
+                        </div>
+                        <div class="chart-diamond house-6">
+                            <span class="house-num">6</span>
+                            <span class="rashi-label">@getHouseRashi(6)</span>
+                            <span class="planet-text">@getHousePlanets(6)</span>
+                        </div>
+                        <div class="chart-diamond house-7">
+                            <span class="house-num">7</span>
+                            <span class="rashi-label">@getHouseRashi(7)</span>
+                            <span class="planet-text">@getHousePlanets(7)</span>
+                        </div>
+                        <div class="chart-diamond house-8">
+                            <span class="house-num">8</span>
+                            <span class="rashi-label">@getHouseRashi(8)</span>
+                            <span class="planet-text">@getHousePlanets(8)</span>
+                        </div>
+                        <div class="chart-diamond house-9">
+                            <span class="house-num">9</span>
+                            <span class="rashi-label">@getHouseRashi(9)</span>
+                            <span class="planet-text">@getHousePlanets(9)</span>
+                        </div>
+                        <div class="chart-diamond house-10">
+                            <span class="house-num">10</span>
+                            <span class="rashi-label">@getHouseRashi(10)</span>
+                            <span class="planet-text">@getHousePlanets(10)</span>
+                        </div>
+                        <div class="chart-diamond house-11">
+                            <span class="house-num">11</span>
+                            <span class="rashi-label">@getHouseRashi(11)</span>
+                            <span class="planet-text">@getHousePlanets(11)</span>
+                        </div>
+                        <div class="chart-diamond house-12">
+                            <span class="house-num">12</span>
+                            <span class="rashi-label">@getHouseRashi(12)</span>
+                            <span class="planet-text">@getHousePlanets(12)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Planet Positions Table -->
+            <div class="row justify-content-center planet-table-section">
+                <div class="col-lg-10">
+                    <h3 class="heading-font text-center mb-4" style="font-weight:700; color:var(--primary);">Planetary Positions</h3>
+                    <div class="table-responsive">
+                        <table class="table table-striped planet-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Planet</th>
+                                    <th>Rashi (Sign)</th>
+                                    <th>Degrees</th>
+                                    <th>House</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var planet in Model.Result.PlanetPositions)
+                                {
+                                    <tr>
+                                        <td class="planet-icon-cell text-center">
+                                            @if (planet.PlanetName == "Sun") { <span>☉</span> }
+                                            else if (planet.PlanetName == "Moon") { <span>☽</span> }
+                                            else if (planet.PlanetName == "Mars") { <span>♂</span> }
+                                            else if (planet.PlanetName == "Mercury") { <span>☿</span> }
+                                            else if (planet.PlanetName == "Jupiter") { <span>♃</span> }
+                                            else if (planet.PlanetName == "Venus") { <span>♀</span> }
+                                            else if (planet.PlanetName == "Saturn") { <span>♄</span> }
+                                            else if (planet.PlanetName == "Rahu") { <span>☊</span> }
+                                            else if (planet.PlanetName == "Ketu") { <span>☋</span> }
+                                            else { <span>⬆</span> }
+                                        </td>
+                                        <td class="planet-name-cell">
+                                            @planet.PlanetName
+                                            @if (!string.IsNullOrEmpty(planet.Retrograde))
+                                            {
+                                                <span class="badge bg-warning text-dark ms-1" style="font-size:0.65rem;">R</span>
+                                            }
+                                        </td>
+                                        <td>@planet.RashiName</td>
+                                        <td>@planet.Degrees° @planet.Minutes'</td>
+                                        <td><strong>House @planet.House</strong></td>
+                                        <td>
+                                            @if (new[] { "Sun", "Mars", "Saturn", "Rahu", "Ketu" }.Contains(planet.PlanetName))
+                                            {
+                                                <span class="badge bg-danger bg-opacity-10 text-danger">Malefic</span>
+                                            }
+                                            else if (new[] { "Jupiter", "Venus", "Moon", "Mercury" }.Contains(planet.PlanetName))
+                                            {
+                                                <span class="badge bg-success bg-opacity-10 text-success">Benefic</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary bg-opacity-10 text-secondary">—</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ayanamsa & Sidereal Time (VB6 Format_RAK / FNDM) -->
+            <div class="row justify-content-center mt-4">
+                <div class="col-lg-6">
+                    <div class="alert alert-light text-center" style="border-radius:12px; border:1px solid #e0d5f0;">
+                        <strong>Ayanamsa:</strong> @NirmalaAstrology_Web.Services.AstroMath.FormatAyanamsa(Model.Result.Ayanamsa) &nbsp;|&nbsp;
+                        <strong>Sidereal Time:</strong> @NirmalaAstrology_Web.Services.AstroMath.FormatSiderealTimeHours(Model.Result.SiderealTime)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}

@@ -1,0 +1,122 @@
+@model NirmalaAstrology_Web.ViewModels.MuhuratViewModel
+@{
+    Layout = "~/Views/Shared/_AppLayout.cshtml";
+    ViewBag.Title = "Muhurat";
+}
+
+<div class="page-header">
+    <h1>Muhurat</h1>
+    <p>MVP from VB6 <code>tTodayzKaalShudhi</code>: Abhijit, Chatur-Ghatika, Rahu Kaal for a chosen date and place.</p>
+</div>
+
+@using (Html.BeginForm("Index", "Muhurat", FormMethod.Post, new { id = "muhuratForm", autocomplete = "off" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger mb-3" })
+    <div class="glass-card p-4">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label text-light">Date</label>
+                @Html.TextBoxFor(m => m.Date, "{0:yyyy-MM-dd}", new { @class = "form-control glass-input", type = "date" })
+            </div>
+            <div class="col-md-5">
+                <label class="form-label text-light">Place</label>
+                <input type="text" id="placeSearch" class="form-control glass-input" placeholder="Type place name…" value="@Model.PlaceName" autocomplete="off" />
+                @Html.HiddenFor(m => m.PlaceId)
+                @Html.HiddenFor(m => m.PlaceName)
+                @Html.HiddenFor(m => m.CountryName)
+                @Html.HiddenFor(m => m.Latitude)
+                @Html.HiddenFor(m => m.Longitude)
+                @Html.HiddenFor(m => m.Timezone)
+                <div id="placeHints" class="list-group mt-1" style="display:none;"></div>
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-gold">Calculate Muhurat</button>
+            </div>
+        </div>
+        @if (!string.IsNullOrEmpty(Model.PlaceName))
+        {
+            <p class="text-light-muted small mt-2 mb-0">@Model.PlaceName @Model.CountryName · lat @Model.Latitude · lon @Model.Longitude · TZ @Model.Timezone</p>
+        }
+    </div>
+}
+
+@if (Model.Result != null)
+{
+    var r = Model.Result;
+    <section class="glass-card p-4 mt-4">
+        <h2 class="h4 text-gold">@r.DateLabel · @r.WeekdayHindu</h2>
+        <p class="text-light-muted">@r.PlaceLabel · Sunrise @r.SunriseText · Sunset @r.SunsetText</p>
+
+        <h3 class="h6 text-gold mt-3">Abhijit</h3>
+        <p class="mb-1">@r.AbhijitNote</p>
+        <p><strong>@r.AbhijitWindow</strong></p>
+
+        <h3 class="h6 text-gold mt-3">Rahu Kaal</h3>
+        <p><strong>@r.RahuKaalWindow</strong></p>
+
+        <h3 class="h6 text-gold mt-3">Chatur-Ghatika</h3>
+        <div class="table-responsive">
+            <table class="table table-dark table-sm app-table">
+                <thead><tr><th>Period</th><th>Name</th><th>From</th><th>To</th></tr></thead>
+                <tbody>
+                @foreach (var s in r.ChaturGhatika)
+                {
+                    <tr><td>@s.Period</td><td>@s.Name</td><td>@s.FromText</td><td>@s.ToText</td></tr>
+                }
+                </tbody>
+            </table>
+        </div>
+
+        <h3 class="h6 text-gold mt-3">Kaal Shuddhi notes</h3>
+        <ul class="mb-0">
+            @foreach (var n in r.KaalShuddhiNotes)
+            {
+                <li>@n</li>
+            }
+        </ul>
+    </section>
+}
+
+@section Scripts {
+<script>
+(function () {
+    var box = document.getElementById('placeSearch');
+    var hints = document.getElementById('placeHints');
+    if (!box) return;
+    var timer = null;
+    box.addEventListener('input', function () {
+        clearTimeout(timer);
+        var q = box.value.trim();
+        if (q.length < 2) { hints.style.display = 'none'; hints.innerHTML = ''; return; }
+        timer = setTimeout(function () {
+            fetch('@Url.Action("SearchPlace", "Home")?keyword=' + encodeURIComponent(q))
+                .then(function (r) { return r.json(); })
+                .then(function (rows) {
+                    if (!Array.isArray(rows) || !rows.length) { hints.style.display = 'none'; return; }
+                    hints.innerHTML = rows.map(function (p) {
+                        return '<button type="button" class="list-group-item list-group-item-action" data-id="' + p.placeId +
+                            '" data-name="' + (p.placeName || '') + '" data-country="' + (p.countryName || '') +
+                            '" data-lat="' + p.latitude + '" data-lon="' + p.longitude + '" data-tz="' + (p.timezone || '5.5') + '">' +
+                            (p.displayText || p.placeName) + '</button>';
+                    }).join('');
+                    hints.style.display = 'block';
+                });
+        }, 250);
+    });
+    hints.addEventListener('click', function (e) {
+        var b = e.target.closest('button');
+        if (!b) return;
+        document.getElementById('PlaceId').value = b.getAttribute('data-id');
+        document.getElementById('PlaceName').value = b.getAttribute('data-name');
+        document.getElementById('CountryName').value = b.getAttribute('data-country');
+        document.getElementById('Latitude').value = b.getAttribute('data-lat');
+        document.getElementById('Longitude').value = b.getAttribute('data-lon');
+        var tz = parseFloat(b.getAttribute('data-tz'));
+        document.getElementById('Timezone').value = isNaN(tz) ? 5.5 : tz;
+        box.value = b.getAttribute('data-name');
+        hints.style.display = 'none';
+    });
+})();
+</script>
+}

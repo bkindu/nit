@@ -1,0 +1,40 @@
+@model NirmalaAstrology_Web.Models.NumerologyViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Free Basic Numerology Report";
+}
+<section class="py-5" style="margin-top:80px;">
+    <div class="container" style="max-width:640px;">
+        <div class="glass-card p-4">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <h1 class="h3 text-gold mb-0">Basic Numerology Report</h1>
+                <span class="badge bg-success">FREE</span>
+            </div>
+            <p class="text-light-muted">@(ViewBag.Description as string ?? "Core numbers only — not the full admin numerology module.")</p>
+            <div class="mb-3 p-3" style="background:rgba(0,0,0,.25);border-radius:8px;">
+                <strong class="text-success">No payment required</strong>
+            </div>
+            @using (Html.BeginForm("BasicNumerology", "PublicReport", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "text-danger mb-3" })
+                <div class="mb-3">
+                    <label class="form-label text-light">Full name</label>
+                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control glass-input", required = "required" })
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-light">Date of birth</label>
+                    @Html.TextBoxFor(m => m.DateOfBirth, "{0:yyyy-MM-dd}", new { @class = "form-control glass-input", type = "date", required = "required" })
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-light">Nickname (optional)</label>
+                    @Html.TextBoxFor(m => m.NickName, new { @class = "form-control glass-input" })
+                </div>
+                <div class="d-flex gap-2 flex-wrap">
+                    <button type="submit" name="mode" value="download" class="btn btn-gold">Download FREE PDF</button>
+                    <button type="submit" name="mode" value="preview" class="btn btn-outline-gold">Preview / Print</button>
+                </div>
+            }
+        </div>
+    </div>
+</section>

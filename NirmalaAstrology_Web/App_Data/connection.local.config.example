@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  COPY to: App_Data/connection.local.config
+  Fill Server / Database / Uid / Pwd locally.
+  Do NOT commit connection.local.config (gitignored).
+  Do NOT paste real passwords into chat, GitHub, or Cursor Cloud.
+
+  BigRock live site (app + MySQL on same host): Server=localhost
+  Your PC talking to BigRock MySQL remotely: Server=YOUR_DB_HOST_IP
+-->
+<connectionStrings>
+  <add name="NirmalaAstrologyDB"
+       connectionString="Server=localhost;Port=3306;Database=YOUR_DB;Uid=YOUR_USER;Pwd=YOUR_PASSWORD;Charset=utf8mb4;SslMode=Preferred;AllowUserVariables=True;"
+       providerName="MySql.Data.MySqlClient" />
+</connectionStrings>

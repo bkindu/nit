@@ -1,0 +1,47 @@
+@{
+    ViewBag.Title = "Payment";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var upi = (ViewBag.UpiId as string) ?? NirmalaAstrology_Web.Services.CommerceSchemaService.UpiId;
+    var upiLink = "upi://pay?pa=" + System.Uri.EscapeDataString(upi) + "&pn=" + System.Uri.EscapeDataString("Indu Sharma") + "&cu=INR";
+}
+<section class="contact-section py-5" style="margin-top: 80px;">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="section-title text-gold mb-2">Payment</h2>
+            <p class="text-light-muted">Scan to pay Indu Sharma · Nirmala Astrology</p>
+            <p class="small text-light-muted mb-0">UPI payment is for <strong>appointments</strong> and paid consultations only. Short Kundli / Numerology PDFs are <strong>FREE</strong> — no payment required.</p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-5" data-aos="fade-up">
+                <div class="glass-card p-4 text-center h-100">
+                    <h4 class="text-gold mb-3">UPI / Google Pay</h4>
+                    <img src="~/Images/payment-upi-qr.png" alt="UPI payment QR for Indu Sharma" class="img-fluid mb-3" style="max-width: 280px; background:#fff; padding:12px; border-radius:12px;" />
+                    <p class="text-light mb-1"><strong>Indu Sharma</strong></p>
+                    <p class="text-gold mb-2" style="font-size:1.05rem;">@upi</p>
+                    <p class="text-light-muted small mb-3">Scan to pay with any UPI app · Do not share OTPs or passwords</p>
+                    <a class="btn btn-gold" href="@upiLink">
+                        <i class="fas fa-mobile-alt me-2"></i>Open UPI app
+                    </a>
+                    <p class="small text-light-muted mt-3 mb-0">
+                        <a class="text-gold" href="@Url.Action("Index", "Appointment")">Book appointment &amp; pay securely</a>
+                    </p>
+                </div>
+            </div>
+            <div class="col-lg-5" data-aos="fade-up" data-aos-delay="80">
+                <div class="glass-card p-4 h-100">
+                    <h4 class="text-gold mb-3"><i class="fas fa-shield-alt me-2"></i>Secure payment notes</h4>
+                    <ul class="list-unstyled text-light mb-0">
+                        <li class="mb-3"><i class="fas fa-check text-gold me-2"></i>Amount &amp; status come from our server — never trust a third-party “paid” message alone.</li>
+                        <li class="mb-3"><i class="fas fa-check text-gold me-2"></i>After UPI transfer, submit the bank/UPI transaction ID on your booking page.</li>
+                        <li class="mb-3"><i class="fas fa-check text-gold me-2"></i>Admin verifies payment before appointment approval.</li>
+                        <li class="mb-3"><i class="fas fa-user text-gold me-2"></i>Indu Sharma · Astrologer</li>
+                        <li class="mb-3"><i class="fas fa-phone-alt text-gold me-2"></i><a class="text-light-muted" href="tel:+919855110123">98551-10123</a> <span class="text-danger small">(Pre-appointment only)</span></li>
+                        <li class="mb-3"><i class="fas fa-envelope text-gold me-2"></i><a class="text-light-muted" href="mailto:nirmala.astrology@gmail.com">nirmala.astrology&#64;gmail.com</a></li>
+                        <li><i class="fas fa-map-marker-alt text-gold me-2"></i>Sidhu Colony, Behind Central Jail, Bhadson Road, Patiala-147005 (Pb.)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

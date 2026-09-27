@@ -1,0 +1,18 @@
+# Secrets / local-only (never commit or publish to public repos)
+App_Data/smtp.local.config
+App_Data/connection.local.config
+App_Data/connection.bigrock.config
+App_Data/README_DB_PRIVATE.txt
+App_Data/connectionStrings.config
+App_Data/connectionStrings.*.local.config
+App_Data/_hosting_tmp/
+App_Data/**/*.pubxml.user
+**/FTPProfile.pubxml.user
+*.user
+!*.csproj.user
+
+# Build
+bin/
+obj/
+packages/
+*.log

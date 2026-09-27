@@ -1,0 +1,133 @@
+@model NirmalaAstrology_Web.ViewModels.BirthDataViewModel
+@{
+    Layout = "~/Views/Shared/_AppLayout.cshtml";
+    ViewBag.Title = "Birth Data";
+}
+
+<div class="page-header">
+    <h1>Birth Data</h1>
+    <p>VB6 Data Entry equivalent. Enter birth particulars, then generate Kundli, save the native, or continue to match making.</p>
+</div>
+
+@using (Html.BeginForm("Index", "BirthData", FormMethod.Post, new { id = "kundliForm", autocomplete = "off" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.NativeId)
+    @Html.HiddenFor(m => m.CountryName)
+    @Html.ValidationSummary(true, "", new { @class = "text-danger mb-3" })
+
+    <section class="glass-card p-4 mb-4">
+        <h2 class="h5 text-gold mb-3">Native</h2>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">Name <span class="text-danger">*</span></label>
+                @Html.TextBoxFor(m => m.Name, new { @class = "form-control glass-input", placeholder = "Full name" })
+                @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger small" })
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Nick Name</label>
+                @Html.TextBoxFor(m => m.NickName, new { @class = "form-control glass-input" })
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Father's Name</label>
+                @Html.TextBoxFor(m => m.FatherName, new { @class = "form-control glass-input" })
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Gender</label>
+                <div class="d-flex gap-3 mt-2">
+                    <label class="form-check-label"><input class="form-check-input" type="radio" name="Gender" value="M" @(Model.Gender == "F" || Model.Gender == "O" ? "" : "checked") /> Male</label>
+                    <label class="form-check-label"><input class="form-check-input" type="radio" name="Gender" value="F" @(Model.Gender == "F" ? "checked" : "") /> Female</label>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Date of Birth <span class="text-danger">*</span></label>
+                @Html.TextBoxFor(m => m.DateOfBirth, "{0:yyyy-MM-dd}", new { @class = "form-control glass-input", type = "date" })
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Hour</label>
+                @Html.TextBoxFor(m => m.Hour, new { @class = "form-control glass-input", type = "number", min = "1", max = "12" })
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Minute</label>
+                @Html.TextBoxFor(m => m.Minute, new { @class = "form-control glass-input", type = "number", min = "0", max = "59" })
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">AM / PM</label>
+                <div class="d-flex gap-3 mt-2">
+                    <label><input type="radio" name="Meridiem" value="AM" @(Model.Meridiem == "PM" ? "" : "checked") /> AM</label>
+                    <label><input type="radio" name="Meridiem" value="PM" @(Model.Meridiem == "PM" ? "checked" : "") /> PM</label>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <label class="form-label">Birth Place <span class="text-danger">*</span></label>
+                <div class="position-relative">
+                    <input type="text" id="placeSearch" class="form-control glass-input" placeholder="Type at least 2 characters..." value="@Model.PlaceName" autocomplete="off" />
+                    @Html.HiddenFor(m => m.PlaceId, new { id = "placeId" })
+                    @Html.HiddenFor(m => m.PlaceName)
+                    <div id="placeDropdown" class="place-dropdown"></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Latitude</label>
+                @Html.TextBoxFor(m => m.Latitude, new { @class = "form-control glass-input", id = "latitude", @readonly = "readonly" })
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Longitude</label>
+                @Html.TextBoxFor(m => m.Longitude, new { @class = "form-control glass-input", id = "longitude", @readonly = "readonly" })
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Timezone</label>
+                @Html.TextBoxFor(m => m.Timezone, new { @class = "form-control glass-input", id = "timezone", @readonly = "readonly" })
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Reference / Address</label>
+                @Html.TextBoxFor(m => m.Address, new { @class = "form-control glass-input" })
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Remarks</label>
+                @Html.TextBoxFor(m => m.Remarks, new { @class = "form-control glass-input" })
+            </div>
+        </div>
+    </section>
+
+    <section class="glass-card p-4 mb-4">
+        <h2 class="h5 text-gold mb-3">Report choice</h2>
+        <p class="text-light-muted small">Maps to VB6 Control_Panel. DETAILED and MEDIUM run the full ganit chain; DETAILED also adds eDashasAll extras, Varga deities, and Dhoomadi + Mantreshwar/Parasari Gulikadi upagrahas.</p>
+        <div class="row g-2">
+            @foreach (var choice in new[] {
+                new { Id = "KUNDALI", Label = "Kundli" },
+                new { Id = "DETAILED", Label = "Detailed Horoscope" },
+                new { Id = "MEDIUM", Label = "Medium Horoscope" },
+                new { Id = "MATCH_MAKING", Label = "Match Making" }
+            })
+            {
+                <div class="col-md-3">
+                    <label class="choice-tile">
+                        <input type="radio" name="ReportChoice" value="@choice.Id" @(Model.ReportChoice == choice.Id ? "checked" : "") />
+                        <span>@choice.Label</span>
+                    </label>
+                </div>
+            }
+        </div>
+        <div class="form-check mt-3">
+            <input class="form-check-input" type="checkbox" name="SaveRecord" value="true" id="saveRecord" @(Model.SaveRecord ? "checked" : "") />
+            <label class="form-check-label" for="saveRecord">Save birth data to native records</label>
+        </div>
+    </section>
+
+    <div class="d-flex flex-wrap gap-2">
+        <button type="submit" name="command" value="kundli" class="btn btn-gold">Generate Kundli</button>
+        <button type="submit" name="command" value="save" class="btn btn-outline-gold">Save Record</button>
+        <button type="submit" name="command" value="match" class="btn btn-outline-light">Match Making</button>
+        <button type="submit" name="command" value="numerology" class="btn btn-outline-light">Numerology</button>
+        <a class="btn btn-outline-light" href="@Url.Action("Index", "Records")">Search Records</a>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        $('#kundliForm').on('submit', function () {
+            $('#PlaceName').val($('#placeSearch').val());
+        });
+    </script>
+}

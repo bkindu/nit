@@ -1,0 +1,42 @@
+@model NirmalaAstrology_Web.Models.BirthDataSessionModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Free Basic Kundli Report";
+}
+<section class="py-5" style="margin-top:80px;">
+    <div class="container" style="max-width:720px;">
+        <div class="glass-card p-4">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <h1 class="h3 text-gold mb-0">Basic Kundli Report</h1>
+                <span class="badge bg-success">FREE</span>
+            </div>
+            <p class="text-light-muted">@(ViewBag.Description as string ?? "2-page letterhead PDF: basic birth info + kundli chart.")</p>
+            <div class="mb-3 p-3" style="background:rgba(0,0,0,.25);border-radius:8px;">
+                <strong class="text-success">No payment required</strong>
+                <div class="small text-light-muted">Download or preview immediately. Full DETAILED reports and appointment booking remain paid / admin services.</div>
+            </div>
+            @using (Html.BeginForm("BasicHoroscope", "PublicReport", FormMethod.Post, new { @class = "js-pdf-download-form", data_pdf_refresh = "1", data_no_spinner = "1" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "text-danger mb-3" })
+                <div class="row g-3">
+                    <div class="col-md-6"><label class="form-label text-light">Name</label><input name="Name" class="form-control glass-input" value="Native" required /></div>
+                    <div class="col-md-3"><label class="form-label text-light">Day</label><input type="number" name="Day" class="form-control glass-input" min="1" max="31" value="8" required /></div>
+                    <div class="col-md-3"><label class="form-label text-light">Month</label><input type="number" name="Month" class="form-control glass-input" min="1" max="12" value="2" required /></div>
+                    <div class="col-md-3"><label class="form-label text-light">Year</label><input type="number" name="Year" class="form-control glass-input" min="1900" value="1981" required /></div>
+                    <div class="col-md-3"><label class="form-label text-light">Hour (0–23)</label><input type="number" name="Hours" class="form-control glass-input" min="0" max="23" value="7" required /></div>
+                    <div class="col-md-3"><label class="form-label text-light">Minute</label><input type="number" name="Minutes" class="form-control glass-input" min="0" max="59" value="47" required /></div>
+                    <div class="col-md-6"><label class="form-label text-light">Place</label><input name="Place" class="form-control glass-input" required placeholder="Patiala" value="Patiala" /></div>
+                    @* Atlas packed DD.MM / HH.MM (VB6 Indu) — engine applies FNDG *@
+                    <div class="col-md-4"><label class="form-label text-light">Latitude (DD.MM)</label><input type="number" step="any" name="Latitude" class="form-control glass-input" value="30.19" required /></div>
+                    <div class="col-md-4"><label class="form-label text-light">Longitude (DD.MM)</label><input type="number" step="any" name="Longitude" class="form-control glass-input" value="76.25" required /></div>
+                    <div class="col-md-4"><label class="form-label text-light">Timezone (HH.MM)</label><input type="number" step="any" name="Timezone" class="form-control glass-input" value="5.30" required /></div>
+                </div>
+                <div class="mt-4 d-flex gap-2 flex-wrap">
+                    <button type="submit" name="mode" value="download" class="btn btn-gold">Download FREE PDF</button>
+                    <button type="submit" name="mode" value="preview" class="btn btn-outline-gold" formnovalidate data-preview="1">Preview / Print</button>
+                </div>
+            }
+        </div>
+    </div>
+</section>

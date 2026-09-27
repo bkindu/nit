@@ -1,0 +1,15 @@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Access Denied";
+}
+
+<section class="py-5" style="margin-top:80px;">
+    <div class="container" style="max-width:640px;">
+        <div class="glass-card p-4">
+            <h1 class="h3 text-gold">Access denied</h1>
+            <p class="text-light-muted">You do not have permission to access this report or admin area.</p>
+            <a class="btn btn-gold" href="@Url.Action("Index", "Home", new { area = "" })">Public site</a>
+            <a class="btn btn-outline-gold" href="@Url.Action("Login", "Auth", new { area = "" })">Admin login</a>
+        </div>
+    </div>
+</section>

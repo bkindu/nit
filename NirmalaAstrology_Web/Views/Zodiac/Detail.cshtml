@@ -1,0 +1,237 @@
+@model NirmalaAstrology_Web.ViewModels.ZodiacDetailViewModel
+@{
+    ViewBag.Title = Model.Zodiac.Name + " - " + Model.Zodiac.HindiName + " | Nirmala Astrology";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Breadcrumb -->
+<section class="py-3 section-dark border-bottom border-gold-subtle">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")" class="text-gold">Home</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Zodiac")" class="text-gold">Zodiac Signs</a></li>
+                <li class="breadcrumb-item text-light active" aria-current="page">@Model.Zodiac.Name</li>
+            </ol>
+        </nav>
+    </div>
+</section>
+
+<!-- Zodiac Detail Section -->
+<section class="py-5 section-dark">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Main Content -->
+            <div class="col-lg-8">
+                <!-- Zodiac Header Card -->
+                <div class="glass-card p-4 p-md-5 mb-4" data-aos="fade-up">
+                    <div class="text-center mb-4">
+                        <div class="zodiac-detail-icon-wrapper mb-3">
+                            <i class="@Model.Zodiac.Icon fa-4x text-gold"></i>
+                        </div>
+                        <h1 class="display-5 fw-bold text-gold">@Model.Zodiac.Name</h1>
+                        <p class="fs-4 text-light-muted">@Model.Zodiac.HindiName</p>
+                    </div>
+                    <p class="text-light fs-5 text-justify">@Model.Zodiac.Description</p>
+                </div>
+
+                <!-- Key Info Cards -->
+                <div class="row g-3 mb-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="col-md-3 col-6">
+                        <div class="info-card text-center h-100">
+                            <i class="fas fa-calendar text-gold mb-2"></i>
+                            <small class="text-light-muted d-block">Lucky Day</small>
+                            <strong class="text-light">@Model.Zodiac.LuckyDay</strong>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="info-card text-center h-100">
+                            <i class="fas fa-hashtag text-gold mb-2"></i>
+                            <small class="text-light-muted d-block">Lucky Number</small>
+                            <strong class="text-light">@Model.Zodiac.LuckyNumber</strong>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="info-card text-center h-100">
+                            <i class="fas fa-palette text-gold mb-2"></i>
+                            <small class="text-light-muted d-block">Lucky Color</small>
+                            <strong class="text-light">@Model.Zodiac.LuckyColor</strong>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="info-card text-center h-100">
+                            <i class="fas fa-globe text-gold mb-2"></i>
+                            <small class="text-light-muted d-block">Planet</small>
+                            <strong class="text-light">@Model.Zodiac.Planet</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Element & Nature -->
+                <div class="row g-3 mb-4" data-aos="fade-up" data-aos-delay="150">
+                    <div class="col-md-6">
+                        <div class="glass-card p-3">
+                            <div class="d-flex align-items-center">
+                                <div class="me-3">
+                                    <i class="fas fa-fire text-gold fa-2x"></i>
+                                </div>
+                                <div>
+                                    <small class="text-light-muted">Element</small>
+                                    <h5 class="text-light mb-0">@Model.Zodiac.Element</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="glass-card p-3">
+                            <div class="d-flex align-items-center">
+                                <div class="me-3">
+                                    <i class="fas fa-leaf text-gold fa-2x"></i>
+                                </div>
+                                <div>
+                                    <small class="text-light-muted">Nature</small>
+                                    <h5 class="text-light mb-0">@Model.Zodiac.Nature</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Sections -->
+                <div class="glass-card p-4 mb-4" data-aos="fade-up" data-aos-delay="200">
+                    <h4 class="text-gold mb-3"><i class="fas fa-user me-2"></i>Personality</h4>
+                    <p class="text-light text-justify">@Model.Zodiac.Personality</p>
+                </div>
+
+                <div class="glass-card p-4 mb-4" data-aos="fade-up" data-aos-delay="250">
+                    <h4 class="text-gold mb-3"><i class="fas fa-list-ul me-2"></i>Characteristics</h4>
+                    <p class="text-light text-justify">@Model.Zodiac.Characteristics</p>
+                </div>
+
+                <div class="row g-4 mb-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="col-md-6">
+                        <div class="glass-card p-4 h-100">
+                            <h5 class="text-gold mb-3"><i class="fas fa-check-circle me-2"></i>Strengths</h5>
+                            <p class="text-light mb-0">@Model.Zodiac.Strength</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="glass-card p-4 h-100">
+                            <h5 class="text-gold mb-3"><i class="fas fa-times-circle me-2"></i>Weaknesses</h5>
+                            <p class="text-light mb-0">@Model.Zodiac.Weakness</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Life Aspects -->
+                <div class="row g-4 mb-4" data-aos="fade-up" data-aos-delay="350">
+                    <div class="col-md-6">
+                        <div class="glass-card p-4 h-100">
+                            <h5 class="text-gold mb-3"><i class="fas fa-briefcase me-2"></i>Career</h5>
+                            <p class="text-light mb-0">@Model.Zodiac.Career</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="glass-card p-4 h-100">
+                            <h5 class="text-gold mb-3"><i class="fas fa-heart me-2"></i>Love & Marriage</h5>
+                            <p class="text-light mb-0">@Model.Zodiac.Love</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4 mb-4" data-aos="fade-up" data-aos-delay="400">
+                    <div class="col-md-6">
+                        <div class="glass-card p-4 h-100">
+                            <h5 class="text-gold mb-3"><i class="fas fa-heartbeat me-2"></i>Health</h5>
+                            <p class="text-light mb-0">@Model.Zodiac.Health</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="glass-card p-4 h-100">
+                            <h5 class="text-gold mb-3"><i class="fas fa-coins me-2"></i>Finance</h5>
+                            <p class="text-light mb-0">@Model.Zodiac.Finance</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Compatible Signs -->
+                <div class="glass-card p-4" data-aos="fade-up" data-aos-delay="450">
+                    <h4 class="text-gold mb-3"><i class="fas fa-heart me-2"></i>Most Compatible Signs</h4>
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach (var sign in Model.CompatibleSignsList)
+                        {
+                            var trimmedSign = sign.Trim();
+                            var compatibleZodiac = Model.AllZodiacs?.Find(z => z.Name.Equals(trimmedSign, System.StringComparison.OrdinalIgnoreCase));
+                            var urlName = trimmedSign.ToLower().Replace(" ", "-");
+                            <a href="@Url.Action("Detail", "Zodiac", new { name = urlName })" class="btn btn-outline-gold btn-sm">
+                                @if (compatibleZodiac != null)
+                                {
+                                    <i class="@compatibleZodiac.Icon me-1"></i>
+                                }
+                                @trimmedSign
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- All Zodiac Signs Widget -->
+                <div class="glass-card p-4 mb-4" data-aos="fade-left">
+                    <h5 class="text-gold mb-3"><i class="fas fa-star me-2"></i>All Zodiac Signs</h5>
+                    <div class="list-group zodiac-list-sidebar">
+                        @foreach (var z in Model.AllZodiacs)
+                        {
+                            var isActive = z.Name == Model.Zodiac.Name;
+                            <a href="@Url.Action("Detail", "Zodiac", new { name = z.UrlName })" class="list-group-item list-group-item-action @(isActive ? "active" : "") border-0 mb-1 rounded">
+                                <i class="@z.Icon me-2 @(isActive ? "text-white" : "text-gold")"></i>
+                                @z.Name
+                                <small class="text-light-muted ms-1">(@z.HindiName)</small>
+                            </a>
+                        }
+                    </div>
+                </div>
+
+                <!-- Quick Info Widget -->
+                <div class="glass-card p-4" data-aos="fade-left" data-aos-delay="100">
+                    <h5 class="text-gold mb-3"><i class="fas fa-info-circle me-2"></i>Quick Info</h5>
+                    <ul class="list-unstyled mb-0">
+                        <li class="d-flex justify-content-between py-2 border-bottom border-gold-subtle">
+                            <span class="text-light-muted">Ruling Planet</span>
+                            <span class="text-light fw-semibold">@Model.Zodiac.Planet</span>
+                        </li>
+                        <li class="d-flex justify-content-between py-2 border-bottom border-gold-subtle">
+                            <span class="text-light-muted">Element</span>
+                            <span class="text-light fw-semibold">@Model.Zodiac.Element</span>
+                        </li>
+                        <li class="d-flex justify-content-between py-2 border-bottom border-gold-subtle">
+                            <span class="text-light-muted">Nature</span>
+                            <span class="text-light fw-semibold">@Model.Zodiac.Nature</span>
+                        </li>
+                        <li class="d-flex justify-content-between py-2 border-bottom border-gold-subtle">
+                            <span class="text-light-muted">Lucky Color</span>
+                            <span class="text-light fw-semibold">@Model.Zodiac.LuckyColor</span>
+                        </li>
+                        <li class="d-flex justify-content-between py-2 border-bottom border-gold-subtle">
+                            <span class="text-light-muted">Lucky Day</span>
+                            <span class="text-light fw-semibold">@Model.Zodiac.LuckyDay</span>
+                        </li>
+                        <li class="d-flex justify-content-between py-2">
+                            <span class="text-light-muted">Lucky Number</span>
+                            <span class="text-light fw-semibold">@Model.Zodiac.LuckyNumber</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- CTA Widget -->
+                <div class="glass-card p-4 mt-4 text-center" data-aos="fade-left" data-aos-delay="200" style="background: linear-gradient(135deg, rgba(178,34,34,0.3), rgba(255,215,0,0.1));">
+                    <i class="bi bi-sun-fill text-gold mb-3" style="font-size:3rem;"></i>
+                    <h5 class="text-gold">Get Your Kundli</h5>
+                    <p class="text-light-muted small mb-3">Discover detailed insights about your life based on Vedic astrology.</p>
+                    <a href="@Url.Action("Index", "Home")#kundli-section" class="btn btn-gold w-100">Generate Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
