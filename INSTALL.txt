@@ -1,0 +1,9 @@
+SYSTEM.RUNTIME / JINT FIX
+
+1. Replace the three files under NirmalaAstrology_Web in the project.
+2. Close Visual Studio and stop IIS Express.
+3. Delete NirmalaAstrology_Web\bin and NirmalaAstrology_Web\obj. Keep bin\roslyn only if Visual Studio recreates it; otherwise NuGet restore will recreate it.
+4. Reopen the solution and restore NuGet packages.
+5. Clean Solution and Rebuild Solution.
+
+The project now references Jint 3.1.4 from lib\net462, removes unused modern MySqlConnector/Microsoft.Extensions/DiagnosticSource/IO.Pipelines references, and removes the incorrect System.Runtime binding redirect. Do not copy an old Jint.dll from a net8.0 folder into bin.

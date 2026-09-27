@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Multiple types were found that match the controller named 'Articles'. This can happen if the route that services this request ('{controller}/{action}/{id}') does not specify namespaces to search for a controller that matches the request. If this is the case, register this route by calling an overload of the 'MapRoute' method that takes a 'namespaces' parameter.<br><br>The request for 'Articles' has found the following matching controllers:<br>NirmalaAstrology_Web.Areas.Admin.Controllers.ArticlesController<br>NirmalaAstrology_Web.Controllers.ArticlesController</title>
+        <meta name="viewport" content="width=device-width" />
+        <style>
+         body {font-family:"Verdana";font-weight:normal;font-size: .7em;color:black;} 
+         p {font-family:"Verdana";font-weight:normal;color:black;margin-top: -5px}
+         b {font-family:"Verdana";font-weight:bold;color:black;margin-top: -5px}
+         H1 { font-family:"Verdana";font-weight:normal;font-size:18pt;color:red }
+         H2 { font-family:"Verdana";font-weight:normal;font-size:14pt;color:maroon }
+         pre {font-family:"Consolas","Lucida Console",Monospace;font-size:11pt;margin:0;padding:0.5em;line-height:14pt}
+         .marker {font-weight: bold; color: black;text-decoration: none;}
+         .version {color: gray;}
+         .error {margin-bottom: 10px;}
+         .expandable { text-decoration:underline; font-weight:bold; color:navy; cursor:pointer; }
+         @media screen and (max-width: 639px) {
+          pre { width: 440px; overflow: auto; white-space: pre-wrap; word-wrap: break-word; }
+         }
+         @media screen and (max-width: 479px) {
+          pre { width: 280px; }
+         }
+        </style>
+    </head>
+
+    <body bgcolor="white">
+
+            <span><H1>Server Error in '/' Application.<hr width=100% size=1 color=silver></H1>
+
+            <h2> <i>Multiple types were found that match the controller named 'Articles'. This can happen if the route that services this request ('{controller}/{action}/{id}') does not specify namespaces to search for a controller that matches the request. If this is the case, register this route by calling an overload of the 'MapRoute' method that takes a 'namespaces' parameter.<br><br>The request for 'Articles' has found the following matching controllers:<br>NirmalaAstrology_Web.Areas.Admin.Controllers.ArticlesController<br>NirmalaAstrology_Web.Controllers.ArticlesController</i> </h2></span>
+
+            <font face="Arial, Helvetica, Geneva, SunSans-Regular, sans-serif ">
+
+            <b> Description: </b>An unhandled exception occurred during the execution of the current web request. Please review the stack trace for more information about the error and where it originated in the code.
+
+            <br><br>
+
+            <b> Exception Details: </b>System.InvalidOperationException: Multiple types were found that match the controller named 'Articles'. This can happen if the route that services this request ('{controller}/{action}/{id}') does not specify namespaces to search for a controller that matches the request. If this is the case, register this route by calling an overload of the 'MapRoute' method that takes a 'namespaces' parameter.<br><br>The request for 'Articles' has found the following matching controllers:<br>NirmalaAstrology_Web.Areas.Admin.Controllers.ArticlesController<br>NirmalaAstrology_Web.Controllers.ArticlesController<br><br>
+
+            <b>Source Error:</b> <br><br>
+
+            <table width=100% bgcolor="#ffffcc">
+               <tr>
+                  <td>
+                      <code>
+
+An unhandled exception was generated during the execution of the current web request. Information regarding the origin and location of the exception can be identified using the exception stack trace below.                      </code>
+
+                  </td>
+               </tr>
+            </table>
+
+            <br>
+
+            <b>Stack Trace:</b> <br><br>
+
+            <table width=100% bgcolor="#ffffcc">
+               <tr>
+                  <td>
+                      <code><pre>
+
+[InvalidOperationException: Multiple types were found that match the controller named &#39;Articles&#39;. This can happen if the route that services this request (&#39;{controller}/{action}/{id}&#39;) does not specify namespaces to search for a controller that matches the request. If this is the case, register this route by calling an overload of the &#39;MapRoute&#39; method that takes a &#39;namespaces&#39; parameter.
+
+The request for &#39;Articles&#39; has found the following matching controllers:
+NirmalaAstrology_Web.Areas.Admin.Controllers.ArticlesController
+NirmalaAstrology_Web.Controllers.ArticlesController]
+   System.Web.Mvc.DefaultControllerFactory.GetControllerTypeWithinNamespaces(RouteBase route, String controllerName, HashSet`1 namespaces) +277
+   System.Web.Mvc.DefaultControllerFactory.GetControllerType(RequestContext requestContext, String controllerName) +683
+   System.Web.Mvc.DefaultControllerFactory.System.Web.Mvc.IControllerFactory.GetControllerSessionBehavior(RequestContext requestContext, String controllerName) +57
+   System.Web.Mvc.MvcRouteHandler.GetSessionStateBehavior(RequestContext requestContext) +241
+   System.Web.Mvc.MvcRouteHandler.GetHttpHandler(RequestContext requestContext) +45
+   System.Web.Routing.UrlRoutingModule.PostResolveRequestCache(HttpContextBase context) +11868970
+   System.Web.SyncEventExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute() +137
+   System.Web.HttpApplication.ExecuteStepImpl(IExecutionStep step) +172
+   System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean&amp; completedSynchronously) +93
+</pre>                      </code>
+
+                  </td>
+               </tr>
+            </table>
+
+            <br>
+
+            <hr width=100% size=1 color=silver>
+
+            <b>Version Information:</b>&nbsp;Microsoft .NET Framework Version:4.0.30319; ASP.NET Version:4.8.9319.0
+
+            </font>
+
+    </body>
+</html>
+<!-- 
+[InvalidOperationException]: Multiple types were found that match the controller named &#39;Articles&#39;. This can happen if the route that services this request (&#39;{controller}/{action}/{id}&#39;) does not specify namespaces to search for a controller that matches the request. If this is the case, register this route by calling an overload of the &#39;MapRoute&#39; method that takes a &#39;namespaces&#39; parameter.
+
+The request for &#39;Articles&#39; has found the following matching controllers:
+NirmalaAstrology_Web.Areas.Admin.Controllers.ArticlesController
+NirmalaAstrology_Web.Controllers.ArticlesController
+   at System.Web.Mvc.DefaultControllerFactory.GetControllerTypeWithinNamespaces(RouteBase route, String controllerName, HashSet`1 namespaces)
+   at System.Web.Mvc.DefaultControllerFactory.GetControllerType(RequestContext requestContext, String controllerName)
+   at System.Web.Mvc.DefaultControllerFactory.System.Web.Mvc.IControllerFactory.GetControllerSessionBehavior(RequestContext requestContext, String controllerName)
+   at System.Web.Mvc.MvcRouteHandler.GetSessionStateBehavior(RequestContext requestContext)
+   at System.Web.Mvc.MvcRouteHandler.GetHttpHandler(RequestContext requestContext)
+   at System.Web.Routing.UrlRoutingModule.PostResolveRequestCache(HttpContextBase context)
+   at System.Web.HttpApplication.SyncEventExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   at System.Web.HttpApplication.ExecuteStepImpl(IExecutionStep step)
+   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+-->
